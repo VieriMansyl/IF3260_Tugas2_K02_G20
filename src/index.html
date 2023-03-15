@@ -9,6 +9,127 @@
   <script src="script.js" type="module" defer></script>
 </head>
 <body>
-
+  <div id="container">
+    <div id="working-container">
+      <div id="canvas-container">
+        <canvas id="canvas" tabindex='1'></canvas>
+      </div>
+      <div id="tools-container">
+        <div id="hollow-object">
+          <img src = "./assets/icons/cube.png" alt="cube"/>
+          <img src = "./assets/icons/prism.png" alt="prism"/>
+          <img src = "./assets/icons/octahedron.png" alt="octahedron"/>
+        </div>
+        <div id="project-and-shading">
+          <div id="projection-tool">
+            <label for="projection">Proyeksi</label>
+            <select name="projection" id="projection">
+              <option value="orthographic">Orthographic</option>
+              <option value="oblique">Oblique</option>
+              <option value="perspective">Perspective</option>
+            </select> 
+          </div>
+          <div id="color-tool">
+            Shape color
+            <input type="color" id="color-picker" name="color-picker"/>
+          </div>
+          <div id="shading-tool">
+            <label for="shading">Shading</label>
+            <input type="checkbox" id="shading">
+          </div>
+        </div>
+        <div id="user-guide">
+          <div id="reset" class="button">Reset</div>
+          <div id="help" class="button">Help</div>
+        </div>
+        <div id="transformation-tool">
+          <div id="rotation-tool">
+            <p>Rotation</p>
+            <label for="rotation-x">X</label>
+            <input type="range" id="rotation-x" value="180" min="0" max="360" step="1"/>
+            <label for="rotation-y">Y</label>
+            <input type="range" id="rotation-y" value="180" min="0" max="360" step="1"/>
+            <label for="rotation-z">Z</label>
+            <input type="range" id="rotation-z" value="180" min="0" max="360" step="1"/>
+            <p>
+              (
+                <output id="rotation-x-value">0</output>,
+                <output id="rotation-y-value">0</output>,
+                <output id="rotation-z-value">0</output>
+              )
+            </p>
+          </div>
+          <div id="translation-tool">
+            <p>Translation</p>
+            <label for="translation-x">X</label>
+            <input type="range" id="translation-x" min="-1" max="1" step="0.0001"/>
+            <label for="translation-y">Y</label>
+            <input type="range" id="translation-y" min="-1" max="1" step="0.0001"/>
+            <label for="translation-z">Z</label>
+            <input type="range" id="translation-z" min="-1" max="1" step="0.0001"/>
+            <p>
+              (
+                <output id="translation-x-value">0</output>,
+                <output id="translation-y-value">0</output>,
+                <output id="translation-z-value">0</output>
+              )
+            </p>
+          </div>
+          <div id="scaling-tool">
+            <p>Scaling</p>
+            <label for="scaling-x">X</label>
+            <input type="range" id="scaling-x" min="-1" max="1" step="0.1"/>
+            <label for="scaling-y">Y</label>
+            <input type="range" id="scaling-y" min="-1" max="1" step="0.1"/>
+            <label for="scaling-z">Z</label>
+            <input type="range" id="scaling-z" min="-1" max="1" step="0.1"/>
+            <p>
+              (
+                <output id="scaling-x-value">0</output>,
+                <output id="scaling-y-value">0</output>,
+                <output id="scaling-z-value">0</output>
+              )
+            </p>
+          </div>
+        </div>
+        <div id="camera">
+          <p>Camera View</p>
+          <div id="camera-tool">
+            <div id="camera-rotation-tool">
+              <label for="camera-rotate">Rotate</label><br>
+              <input type="range" id="camera-rotate" value="180" min="0" max="360" step="1"/><br>
+            </div>
+            <div id="camera-view-tool">
+              <label for="camera-view">View</label><br>
+              <input type="range" id="camera-view" min="0" max="1" step="0.01"/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="help-container">
+      <div id="help-content">
+        <span id="close">&times;</span>
+        <h4>lorem ipsum</h4>
+        <ol>
+          <li>lorem</li>
+          <li>ipsum</li>
+          <li>doloromet</li>
+        </ol>
+        <h4>lorem ipsum</h4>
+        <ol>
+          <li>lorem</li>
+          <li>ipsum</li>
+          <li>doloromet</li>
+        </ol>
+        <h4>lorem ipsum</h4>
+        <ol>
+          <li>lorem</li>
+          <li>ipsum</li>
+          <li>doloromet</li>
+        </ol>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
