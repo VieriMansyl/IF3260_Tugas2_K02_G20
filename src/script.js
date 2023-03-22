@@ -34,7 +34,7 @@ const world_mat =[
     0.0, 0.0, 1.0, 0.0,
     0.0, 0.0, 0.0, 1.0,
 ]
-const mv_mat =[
+let mv_mat =[
     1.0, 0.0, 0.0, 0.0,
     0.0, 1.0, 0.0, 0.0,
     0.0, 0.0, 1.0, 0.0,
@@ -76,7 +76,7 @@ function setModel(type) {
   } else if (type === "prism") {
     model.type = "prism";
     model.vertices = pentagonalPrism;
-  } else if (type === "octa") {
+  } else if (type === "octahedron") {
     model.type = "octahedron";
     model.vertices = octahedron;
   }
@@ -108,7 +108,7 @@ const main = () => {
   setProgram(true);
 
   // set model shown by default
-  setModel("octa");
+  setModel("octahedron");
 
   // --------------- MAIN LOOP ---------------
   eventHandler();
@@ -228,7 +228,48 @@ function eventHandler() {
   closebtn.addEventListener("click", () => {
     document.querySelector("#help-container").style.display = "none";
   });
+
+  const rotateX = document.querySelector("#rotation-x");
+  rotateX.addEventListener( "input", () => {
+    setModelRotation();
+    window.requestAnimationFrame(render);
+  } )
   
+  const rotateY = document.querySelector("#rotation-y");
+  rotateY.addEventListener( "input", () => {
+    setModelRotation();
+    window.requestAnimationFrame(render);
+  } )
+
+  const rotateZ = document.querySelector("#rotation-z");
+  rotateZ.addEventListener( "input", () => {
+    setModelRotation();
+    window.requestAnimationFrame(render);
+  } )
+
+  const hollowObjectPicker = document.querySelector("#hollow-object");
+  hollowObjectPicker.addEventListener("click", e => {
+    if(contains(hollowObjectPicker, e.target)){
+      setModel(e.target.alt);
+      console.log(e.target.alt);
+    }
+    window.requestAnimationFrame(render);
+  });
+}
+
+function setModelRotation(){
+  const rotateX = document.querySelector("#rotation-x");
+  const rotateY = document.querySelector("#rotation-y");
+  const rotateZ = document.querySelector("#rotation-z");
+  mv_mat = TransformationMatrix.getRotationMatrix(
+    rotateX.value - 180, 
+    rotateY.value - 180, 
+    rotateZ.value - 180
+  );
+}
+
+function contains(parent, child) {
+  return parent !== child && parent.contains(child);
 }
 
 window.onload = main;
