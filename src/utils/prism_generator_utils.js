@@ -33,11 +33,11 @@ export class HollowPrism {
    * @defaultValue null
    */
   vertices;
-  /** Kumpulan Index
+  /** Kumpulan Vertex yang berurutan
    * @public
    * @defaultValue null
    */
-  indices;
+  vertexArray;
 
   /** Tipe vertex */
   static #vertexType = {
@@ -71,7 +71,7 @@ export class HollowPrism {
     this.vertices.forEach(base => { console.log(base) });
     console.log("<<<");
     console.log(">>> Indices");
-    console.log(this.indices);
+    console.log(this.vertexArray);
     console.log("<<<");
   }
   /** Bikin vertices-nya */
@@ -198,7 +198,7 @@ export class HollowPrism {
     // console.log(baseIndices);
     const sideIndices = HollowPrism.#generateSideIndices(this.#nSide, this.vertices);
     // console.log(sideIndices);
-    this.indices = baseIndices.concat(sideIndices);
+    this.vertexArray = baseIndices.concat(sideIndices);
   }
 
   /** Bikin indices untuk rusuk di alas dan atas */
@@ -215,12 +215,18 @@ export class HollowPrism {
           currVertex[this.#vertexType.TRUE_OUTER],
           currVertex[this.#vertexType.INNER_TB],
           nextVertex[this.#vertexType.INNER_TB],
+
+          currVertex[this.#vertexType.TRUE_OUTER],
+          nextVertex[this.#vertexType.INNER_TB],
           nextVertex[this.#vertexType.TRUE_OUTER],
         )
 
         indices = indices.concat(
           currVertex[this.#vertexType.TRUE_OUTER],
           currVertex[this.#vertexType.INNER_CW],
+          nextVertex[this.#vertexType.INNER_CCW],
+
+          currVertex[this.#vertexType.TRUE_OUTER],
           nextVertex[this.#vertexType.INNER_CCW],
           nextVertex[this.#vertexType.TRUE_OUTER],
         )
@@ -229,12 +235,18 @@ export class HollowPrism {
           currVertex[this.#vertexType.TRUE_INNER],
           currVertex[this.#vertexType.INNER_TB],
           nextVertex[this.#vertexType.INNER_TB],
+
+          currVertex[this.#vertexType.TRUE_INNER],
+          nextVertex[this.#vertexType.INNER_TB],
           nextVertex[this.#vertexType.TRUE_INNER],
         )
 
         indices = indices.concat(
           currVertex[this.#vertexType.TRUE_INNER],
           currVertex[this.#vertexType.INNER_CW],
+          nextVertex[this.#vertexType.INNER_CCW],
+
+          currVertex[this.#vertexType.TRUE_INNER],
           nextVertex[this.#vertexType.INNER_CCW],
           nextVertex[this.#vertexType.TRUE_INNER],
         )
@@ -256,12 +268,18 @@ export class HollowPrism {
         currVertex[this.#vertexType.TRUE_OUTER],
         currVertex[this.#vertexType.INNER_CW],
         nextVertex[this.#vertexType.INNER_CW],
+
+        currVertex[this.#vertexType.TRUE_OUTER],
+        nextVertex[this.#vertexType.INNER_CW],
         nextVertex[this.#vertexType.TRUE_OUTER],
       )
 
       indices = indices.concat(
         currVertex[this.#vertexType.TRUE_OUTER],
         currVertex[this.#vertexType.INNER_CCW],
+        nextVertex[this.#vertexType.INNER_CCW],
+
+        currVertex[this.#vertexType.TRUE_OUTER],
         nextVertex[this.#vertexType.INNER_CCW],
         nextVertex[this.#vertexType.TRUE_OUTER],
       )
@@ -270,6 +288,9 @@ export class HollowPrism {
         currVertex[this.#vertexType.TRUE_INNER],
         currVertex[this.#vertexType.INNER_CW],
         nextVertex[this.#vertexType.INNER_CW],
+
+        currVertex[this.#vertexType.TRUE_INNER],
+        nextVertex[this.#vertexType.INNER_CW],
         nextVertex[this.#vertexType.TRUE_INNER],
       )
 
@@ -277,15 +298,13 @@ export class HollowPrism {
         currVertex[this.#vertexType.TRUE_INNER],
         currVertex[this.#vertexType.INNER_CCW],
         nextVertex[this.#vertexType.INNER_CCW],
+
+        currVertex[this.#vertexType.TRUE_INNER],
+        nextVertex[this.#vertexType.INNER_CCW],
         nextVertex[this.#vertexType.TRUE_INNER],
       )
     }
     return indices;
-  }
-
-  /** Modulo. Karena Javascript modulonya bisa dapet negative */
-  static #remainder(a, b){
-    return ((a % b) + b) % b;
   }
 
   /** Operasi kurang terhadap tiap komponen point. */
