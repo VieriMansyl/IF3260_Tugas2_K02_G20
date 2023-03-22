@@ -1,11 +1,17 @@
+<<<<<<< HEAD
 import { octahedron } from './assets/models/octahedron.js';
 import { pentagonalPrism } from './assets/models/pentagonalPrism.js';
 import { getWebGLContext, setupWebGL } from './utils/webgl_utils.js';
+=======
+import { octahedron , pentagonalPrism } from "./assets/models.js"
+import { getWebGLContext } from "./utils/webgl_utils.js";
+>>>>>>> e190c96ba59726849b3ecd4e1749f7572d27760d
 
 // INITIALIZE
 const canvas = document.querySelector('#canvas');
 const gl = getWebGLContext(canvas);
 
+<<<<<<< HEAD
 var model;
 
 model = {
@@ -16,6 +22,17 @@ model = {
   vertexCount: Number.int,
   info: {},
 };
+=======
+var model = {
+  type,
+  vertices,
+  vertexCount,
+  indices,
+  normals,
+  info,
+}
+
+>>>>>>> e190c96ba59726849b3ecd4e1749f7572d27760d
 
 const main = () => {
   clearCanvas();
