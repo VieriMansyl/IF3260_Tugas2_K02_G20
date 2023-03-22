@@ -13,7 +13,7 @@ const vertexShaderScript = `
 
   varying lowp vec4 vColor;
   varying highp vec3 vLighting;
-  uniform highp vec3 vDirectional;
+  uniform highp vec3 vdirectional;
 
   void main(void) {
     gl_Position = u_projection * u_modelview * u_world * a_position;
@@ -87,7 +87,7 @@ function createShader(gl, type, source) {
 // create program
 function createProgram(gl, isShading) {
   // set up vertex shader
-  let vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderScript);
+  var vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderScript);
 
   // set up fragment shader
   var fragmentShader;
@@ -114,4 +114,16 @@ function createProgram(gl, isShading) {
   return program;
 }
 
-export {getWebGLContext, createProgram};
+const convertToRGB = hex => {
+  return hex.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i
+             ,(r, g, b) => '#' + r + r + g + g + b + b)
+        .substring(1).match(/.{2}/g)
+        .map(x => parseInt(x, 16))
+}
+
+function getColor() {
+  var hex = document.querySelector("#color-picker").value;
+  const rgb = convertToRGB(hex);
+  const picked_color = [rgb[0]/255, rgb[1]/255, rgb[2]/255, 1.0];
+  return picked_color;
+}

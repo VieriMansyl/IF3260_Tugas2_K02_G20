@@ -1,4 +1,3 @@
-import { degToRad, vectorOperator, remainder } from "./matrix.js";
 /** Prism Generator
  * Ngebikin Prisma. Ada 5 jenis vertex
  *  - True Outer
