@@ -1,79 +1,64 @@
-/**
- * Vertex Shader dihitung per vertex
- */
-const vertexShader = `
-// Variabel attribute diambil dari buffer
-attribute vec3 vertex_position;
-attribute vec3 vertex_color;
+// Vertex Shader script
+const vertexShaderScript = `
+  precision mediump float;
 
-// Variable uniform artinya sama untuk seluruh vertex
-// Matriks proyeksi
-uniform mat4 matrix_projection;
+  attribute vec4 a_position;
+  attribute vec4 a_color;
+  attribute vec3 a_normal;
 
-// Variabel biasa, nanti dimasukin ke fragment shader
-varying vec4 f_color;
+  uniform mat4 u_normal;
+  uniform mat4 u_world;
+  uniform mat4 u_modelview;
+  uniform mat4 u_projection;
 
-void main(){
-  // Nanti dikalikan aja dengan matrix-matrix transformasinya
-  gl_Position = matrix_projection * vec4(vertex_position, 1.0);
-  f_color = vec4(vertex_color, 1.0);
-}`;
+  varying lowp vec4 vColor;
+  varying highp vec3 vLighting;
+  uniform highp vec3 vDirectional;
 
-/**
- * Fragment Shader dihitung per pixel
- */
-const fragmentShader = `
-// Presisi medium
-precision mediump float;
-// Dapat dari vertex shader
-varying vec4 f_color;
+  void main(void) {
+    gl_Position = u_projection * u_modelview * u_world * a_position;
+    vColor = a_color;
 
-void main(){
-  gl_FragColor = f_color;
-}`;
+    highp vec4 transformedNormal = u_normal * vec4(a_normal, 1.0);    
+    highp float directional = max(dot(transformedNormal.xyz, vdirectional), 0.0);
 
-/** Ambil context WebGL
- * @param canvas - HTML Canvas element
- * @returns context WebGL
- */
-export function getWebGLContext(canvas) {
+    highp vec3 ambientLight = vec3(0.3, 0.3, 0.3);
+    highp vec3 directionalLightColor = vec3(1, 1, 1);
+
+    vLighting = ambientLight + (directionalLightColor * directional);
+  }`;
+
+// Fragment Shader script with shading
+const fragmentShaderwithShadingScript = `
+  precision mediump float;
+
+  varying lowp vec4 vColor;
+  varying highp vec3 vLighting;
+
+  void main(void) {
+    gl_FragColor = vec4(vColor.rgb * vLighting, vColor.a);
+  }`;
+
+// Fragment Shader script without shading
+const fragmentShaderwithoutShadingScript = `
+  precision mediump float;
+  varying lowp vec4 vColor;
+
+  void main(void) {
+    gl_FragColor = vColor;
+  }`;
+
+
+
+// set gl on canvas
+function getWebGLContext(canvas) {
   const gl = canvas.getContext("webgl");
-
-  if (!gl) {
-    alert("WebGL isn't available");
-  }
+  if (!gl) alert("WebGL isn't available on current browser.");
 
   return gl;
 }
 
-/** Setup WebGL
- * @param gl - WebGL Context
- * @param vertex - Vertex array containing model vertices
- * @returns WebGL program yang memiliki shaders
- */
-export function setupWebGL(gl, vertex, color) {
-  const program = initShaders(gl, vertexShader, fragmentShader);
-  // Karena objeknya konstan, kita bisa ngisi buffernya langsung dengan vertex
-  // Semua perhitungan nanti akan dilakukan di vertex shader bersamaan dengan
-  // matriks-matriks lain.
-  const vertexBuffer = initBuffer(
-    gl,
-    gl.ARRAY_BUFFER,
-    new Float32Array(vertex),
-  );
-  const colorBuffer = initBuffer(gl, gl.ARRAY_BUFFER, new Float32Array(color));
-
-  enableAttribArray(gl, program, "vertex_position", 3, vertexBuffer);
-  enableAttribArray(gl, program, "vertex_color", 3, colorBuffer);
-
-  return program;
-}
-
-/** Bikin dan bind buffer
-  * @param gl - WebGL Context
-  * @param type - Tipe array. Contoh: gl.ARRAY_BUFFER
-  * @param data - Float32Array yang berisi data yang akan dimasukkan ke buffer
-  */
+// init buffer
 function initBuffer(gl, type, data) {
   const buffer = gl.createBuffer();
 
@@ -84,71 +69,49 @@ function initBuffer(gl, type, data) {
   return buffer;
 }
 
-/** Meng-enable attrib array
-  * Pada vertex shader, kan ada variable attribute, nah itu diambil dari buffer.
-  * @param gl - WebGL Context
-  * @param program - WebGL Program
-  * @param attribName - Nama variable attrib yang ada di vertex shader
-  * @param attribSize - Ukuran komponen/dimensi dari attribName
-  * @param buffer - Dari buffer mana kita ngambil nilai untuk attribName
-  */
-function enableAttribArray(gl, program, attribName, attribSize, buffer) {
-  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-  const location = gl.getAttribLocation(program, attribName);
-  gl.vertexAttribPointer(location, attribSize, gl.FLOAT, false, 0, 0);
-  gl.enableVertexAttribArray(location);
-}
-
-/** 
-  * Inisialisasi Shaders
-  * @param gl - WebGL Context
-  * @param vertexSource - Source code dari Vertex Shader
-  * @param fragmentSource - Source code dari Fragment Shader
-  */
-function initShaders(gl, vertexSource, fragmentSource) {
-  const vertexShader = compileShader(gl, gl.VERTEX_SHADER, vertexSource);
-  const fragmentShader = compileShader(gl, gl.FRAGMENT_SHADER, fragmentSource);
-
-  const program = gl.createProgram();
-  gl.attachShader(program, vertexShader);
-  gl.attachShader(program, fragmentShader);
-  gl.linkProgram(program);
-
-  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-    const msg = "Shader program failed to link.  The error log is:" +
-      "<pre>" +
-      gl.getProgramInfoLog(program) +
-      "</pre>";
-    alert(msg);
-    return -1;
-  }
-
-  gl.useProgram(program);
-  return program;
-}
-
-/**
-  * Ngecompile Shader
-  * @param gl - WebGL Context
-  * @param type - Tipe Shader
-  * @param source - Shader source code
-  * @example Compile vertex shader
-  * ```
-  * compileShader(gl, gl.ARRAY_BUFFER, vertesShader);
-  * ```
-  */
-function compileShader(gl, type, source) {
+// create shader
+function createShader(gl, type, source) {
   const shader = gl.createShader(type);
   gl.shaderSource(shader, source);
   gl.compileShader(shader);
 
   if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-    alert(
-      "An error occurred compiling the shaders: " + gl.getShaderInfoLog(shader),
-    );
+    alert("An error occurred compiling the shaders: " + gl.getShaderInfoLog(shader));
     gl.deleteShader(shader);
     return -1;
   }
 
   return shader;
 }
+
+// create program
+function createProgram(gl, isShading) {
+  // set up vertex shader
+  let vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderScript);
+
+  // set up fragment shader
+  var fragmentShader;
+  if (isShading) {    // if user checked the shading checkbox
+    fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderwithShadingScript);
+  } else {
+    fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderwithoutShadingScript);
+  }
+
+  // create program
+  const program = gl.createProgram();
+
+  // attach shader to program
+  gl.attachShader(program, vertexShader);
+  gl.attachShader(program, fragmentShader);
+  gl.linkProgram(program);
+
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+    const msg = "Shader program failed to link.\nError log :" + gl.getProgramInfoLog(program);
+    alert(msg);
+    return -1;
+  }
+
+  return program;
+}
+
+export {getWebGLContext, createProgram};

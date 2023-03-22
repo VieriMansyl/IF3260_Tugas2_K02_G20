@@ -28,7 +28,7 @@ export function multiMatrix4Multiplication(...mat){
 }
 
 /** Mengali dua matriks 4x4. 
-  * Matriks merupakan array berisi 16 elemen, BUKAN 2D array.
+  * WARN : Matriks merupakan array berisi 16 elemen, BUKAN 2D array.
   * @param mat1 - matriks di bagian kiri  perkalian 
   * @param mat2 - matriks di bagian kanan perkalian 
   */
