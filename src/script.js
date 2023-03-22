@@ -1,21 +1,17 @@
-import { octahedron } from "./assets/models/octahedron.js";
-import { pentagonalPrism } from "./assets/models/pentagonalPrism.js"
-import { getWebGLContext, setupWebGL } from "./utils/webgl_utils.js";
+import { octahedron , pentagonalPrism } from "./assets/models.js"
+import { getWebGLContext } from "./utils/webgl_utils.js";
 
 // INITIALIZE
 const canvas = document.querySelector("#canvas");
 const gl = getWebGLContext(canvas);
 
-var model;
-
-
-model = {
-  jenismodel : "kubus",
-  vertices: [],
-  index : [],
-  normal : [],
-  vertexCount : Number.int,
-  info : {},
+var model = {
+  type,
+  vertices,
+  vertexCount,
+  indices,
+  normals,
+  info,
 }
 
 
