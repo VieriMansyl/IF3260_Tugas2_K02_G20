@@ -1,83 +1,117 @@
 import { octahedron } from './assets/models/octahedron.js';
-import { cube } from './assets/models/cube.js';
+import { pentagonalPrism } from './assets/models/pentagonalPrism.js';
 import { getWebGLContext, setupWebGL } from './utils/webgl_utils.js';
 
-/* ================= HTML Elements ================= */
+// INITIALIZE
 const canvas = document.querySelector('#canvas');
 const gl = getWebGLContext(canvas);
-// const gl = canvas.getContext("webgl");
 
-const helpbtn = document.querySelector('#help');
-const closebtn = document.querySelector('#close');
+var model;
 
-var projection = 'orthographic';
-
-/* ================= HTML Elements ================= */
-
-let setProjection = (proj) => {
-  projection = proj;
-  console.log('Proj:', projection);
+model = {
+  jenismodel: 'kubus',
+  vertices: [],
+  index: [],
+  normal: [],
+  vertexCount: Number.int,
+  info: {},
 };
 
-// help handler
-helpbtn.addEventListener('click', () => {
-  document.querySelector('#help-container').style.display = 'inline';
-});
+const main = () => {
+  clearCanvas();
 
-closebtn.addEventListener('click', () => {
-  document.querySelector('#help-container').style.display = 'none';
-});
-
-/**
- * Lokasi projection matrix di vertex shader
- * Di bikin global supaya bisa diakses main dan drawModel
- */
-let projectionMatrixLocation;
-
-function main() {
-  /**
-   * Placeholder untuk warna
+  /* initiliaze program
+   * by default, shader is set to with shading
    */
-  const color = [];
-  for (let i = 0; i < octahedron.length; i += 3) {
-    color.push(1, 1, 1);
+  var program = createProgram(gl, vertexShaderScript, (isShading = true));
+
+  // record attribute's location and uniform's location
+  var info = {
+    program: program,
+    a_loc: {
+      vertexPosition: gl.getAttribLocation(shaderProgram, 'a_position'),
+      vertexColor: gl.getAttribLocation(shaderProgram, 'a_color'),
+      vertexNormal: gl.getAttribLocation(shaderProgram, 'a_normal'),
+    },
+    u_matrix: {
+      normalMatrix: gl.getUniformLocation(shaderProgram, 'u_normal'),
+      worldMatrix: gl.getUniformLocation(shaderProgram, 'u_world'),
+      modelViewMatrix: gl.getUniformLocation(shaderProgram, 'u_modelview'),
+      projectionMatrix: gl.getUniformLocation(shaderProgram, 'u_projection'),
+      directionalVector: gl.getUniformLocation(shaderProgram, 'vDirectional'),
+    },
+  };
+
+  model.info = info;
+
+  // const color = [];
+  // const model = pentagonalPrism;
+  // for (let i = 0; i < model.length; i += 3) {
+  //   color.push(1, 1, 1);
+  // }
+  // const program = setupWebGL(gl, model, color);
+  // projectionMatrixLocation = gl.getUniformLocation(
+  //   program,
+  //   "matrix_projection",
+  // );
+  // /** Ini cuma contoh
+  //   * Ganti Nanti
+  //   */
+  // let projectionMatrixExample = new Float32Array([
+  //   1, 0, 0, 0,
+  //   0, 1, 0, 0,
+  //   0, 0, 1, 0,
+  //   0, 0, 0, 1
+  // ]);
+  // drawModel(gl, model, projectionMatrixExample);
+};
+
+function drawModel(gl, model, projectionMatrix) {}
+
+// clear canvas as well ass resize canvas to match screen size
+function clearCanvas() {
+  function resizeCanvasToDisplaySize(canvas, multiplier) {
+    multiplier = multiplier || 1;
+    const width = (canvas.clientWidth * multiplier) | 0;
+    const height = (canvas.clientHeight * multiplier) | 0;
+    if (canvas.width !== width || canvas.height !== height) {
+      canvas.width = width;
+      canvas.height = height;
+      return true;
+    }
+    return false;
   }
-  const program = setupWebGL(gl, octahedron, color);
-  projectionMatrixLocation = gl.getUniformLocation(
-    program,
-    'matrix_projection'
-  );
-  /** Ini cuma contoh
-   * Ganti Nanti
-   */
-  let projectionMatrixExample = new Float32Array([
-    [1, 0, 0, 0],
-    [0, 1, 0, 0],
-    [0, 0, 1, 0],
-    [0, 0, 0, 1],
-  ]);
-  drawModel(gl, cube, projectionMatrixExample);
+
+  resizeCanvasToDisplaySize(gl.canvas);
+  gl.viewport(0, 0, canvas.width, canvas.height);
+  gl.clearColor(1, 1, 1, 1);
+  gl.clear(gl.COLOR_BUFFER_BIT);
+
+  // gl.uniformMatrix4fv(projectionMatrixLocation, false, projectionMatrix);
+  // let vertexCount = 4;
+  // for(let idxPermukaan = 0; idxPermukaan < model.length / vertexCount / 3; idxPermukaan++){
+  //   gl.drawArrays(gl.TRIANGLE_FAN, idxPermukaan * vertexCount, vertexCount);
+  // }
 }
 
-/** Ngegambar satu model.
- * Masih belum selesai, perlu penyesuaian.
- * @param gl - WebGL Context
- * @param model - Array yang hanya berisi vertex model
- * @param projectionMatrix - Matrix proyeksi
- * @returns None
- * @beta
- */
-function drawModel(gl, model, projectionMatrix) {
-  gl.uniformMatrix4fv(projectionMatrixLocation, false, projectionMatrix);
-  console.log(model);
-  for (let i = 0; i < model.length; i += 3) {
-    // Satu vertex itu tiga elemen
-    // Ini ngambil 3 vertex
-    // Jadi ngambil 9 elemen
-    // Dan didisplay dengan cara Triangle Fan
-    // Perlu disesuaikan dengan cara kita bikin model
-    gl.drawArrays(gl.TRIANGLE_FAN, i, 3);
-  }
-}
+// // help handler
+// const helpbtn = document.querySelector("#help");
+// helpbtn.addEventListener("click", () => {
+//   document.querySelector("#help-container").style.display = "inline";
+// });
 
-main();
+// const closebtn = document.querySelector("#close");
+// closebtn.addEventListener("click", () => {
+//   document.querySelector("#help-container").style.display = "none";
+// });
+
+// const shadingbox = document.querySelector("#shading");
+// shadingbox.addEventListener("change", () => {
+//   if (shadingbox.checked) {
+//     shading = true;
+//   } else {
+//     shading = false;
+//   }
+// });
+
+window.onload = main;

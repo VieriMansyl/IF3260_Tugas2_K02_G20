@@ -1,18 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="style.css" />
-    <title>3D Hollow Object</title>
-    <script src="script.js" type="module" defer></script>
-  </head>
-  <body>
-    <div id="container">
-      <div id="working-container">
-        <div id="canvas-container">
-          <canvas id="canvas" tabindex="1"></canvas>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="style.css" />
+  <title>3D Hollow Object</title>
+  <script src="script.js" type="module" defer></script>
+</head>
+<body>
+  <div id="container">
+    <div id="working-container">
+      <div id="canvas-container">
+        <canvas id="canvas" tabindex='1'></canvas>
+      </div>
+      <div id="tools-container">
+        <div id="hollow-object">
+          <img src = "./assets/icons/cube.png" alt="cube"/>
+          <img src = "./assets/icons/prism.png" alt="prism"/>
+          <img src = "./assets/icons/octahedron.png" alt="octahedron"/>
         </div>
         <div id="tools-container">
           <div id="hollow-object">
@@ -50,9 +57,9 @@
               <input type="checkbox" id="shading" />
             </div>
           </div>
-          <div id="user-guide">
-            <div id="reset" class="button">Reset</div>
-            <div id="help" class="button">Help</div>
+          <div id="shading-tool">
+            <label for="shading">Shading</label>
+            <input type="checkbox" id="shading" value="shading" checked>
           </div>
           <div id="transformation-tool">
             <div id="rotation-tool">
