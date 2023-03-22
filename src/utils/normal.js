@@ -26,7 +26,7 @@ const setNormalFor = (model) => {
   let normals = []
   for (let i = 0; i < model.length; i+=9){
       u = minus([model[i], model[i+1], model[i+2]], [model[i+3], model[i+4], model[i+5]]);
-      v = minus([model[i], model[i], model[i]], [model[i+6], model[i+7], model[i+8]]);
+      v = minus([model[i], model[i+1], model[i+2]], [model[i+6], model[i+7], model[i+8]]);
       normals.push(...getNormal(u, v));
       normals.push(...getNormal(u, v));
       normals.push(...getNormal(u, v));
