@@ -4,14 +4,14 @@
 * @public getRotationMatrix
 * @public getScaleMatrix
 */
-class TransformationMatrixm {
+class TransformationMatrix {
   /** Menghasilkan matrix translasi. 
     * @param x - Besar translasi komponen x
     * @param y - Besar translasi komponen y
     * @param z - Besar translasi komponen z
     * @returns Matrix Translasi berukuran 4x4
     */
-  getTranslationMatrix(x, y, z){
+  static getTranslationMatrix(x, y, z){
     return [
       1, 0, 0, x,
       0, 1, 0, y,
@@ -27,7 +27,7 @@ class TransformationMatrixm {
     * @param z_degree - Besar rotasi terhadap sumbu z dalam derajat
     * @returns Matrix Rotasi berukuran 4x4
     */
-  getRotationMatrix(x_degree, y_degree, z_degree){
+  static getRotationMatrix(x_degree, y_degree, z_degree){
     /** Besar rotasi terhadap sumbu x dalam radian */
     let x_rad = degToRad(x_degree);
     /** Besar rotasi terhadap sumbu y dalam radian */
@@ -46,7 +46,7 @@ class TransformationMatrixm {
       Math.sin(y_rad) * -1, 
         Math.sin(x_rad) * Math.cos(y_rad), 
         Math.cos(x_rad) * Math.cos(y_rad), 
-        1,
+        0,
       0, 
         0, 
         0, 
@@ -60,7 +60,7 @@ class TransformationMatrixm {
     * @param z - Besar scale komponen z
     * @returns Matrix Scale berukuran 4x4
     */
-  getScaleMatrix(x, y, z){
+  static getScaleMatrix(x, y, z){
     return [
       x, 0, 0, 0,
       0, y, 0, 0,
