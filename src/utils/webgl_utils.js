@@ -16,10 +16,10 @@ const vertexShaderScript = `
   uniform highp vec3 vdirectional;
 
   void main(void) {
-    gl_Position = u_projection * u_modelview * u_world * vec4(a_position, 1.0);
+    gl_Position = u_projection * u_world * u_modelview * vec4(a_position, 1.0);
     vColor = a_color;
 
-    highp vec4 transformedNormal = u_normal * vec4(a_normal, 1.0);    
+    highp vec4 transformedNormal = u_normal * u_modelview * vec4(a_normal, 1.0);    
     highp float directional = max(dot(transformedNormal.xyz, vdirectional), 0.0);
 
     highp vec3 ambientLight = vec3(0.3, 0.3, 0.3);
