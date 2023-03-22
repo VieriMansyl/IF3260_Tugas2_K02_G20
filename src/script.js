@@ -1,4 +1,5 @@
 import { octahedron } from "./assets/models/octahedron.js";
+import { pentagonalPrism } from "./assets/models/pentagonalPrism.js"
 import { getWebGLContext, setupWebGL } from "./utils/webgl_utils.js";
 
 const canvas = document.querySelector("#canvas");
@@ -27,10 +28,11 @@ function main() {
    * Placeholder untuk warna 
    */
   const color = [];
-  for (let i = 0; i < octahedron.length; i += 3) {
+  const model = pentagonalPrism;
+  for (let i = 0; i < model.length; i += 3) {
     color.push(1, 1, 1);
   }
-  const program = setupWebGL(gl, octahedron, color);
+  const program = setupWebGL(gl, model, color);
   projectionMatrixLocation = gl.getUniformLocation(
     program,
     "matrix_projection",
@@ -39,12 +41,12 @@ function main() {
     * Ganti Nanti
     */
   let projectionMatrixExample = new Float32Array([
-    [1, 0, 0, 0],
-    [0, 1, 0, 0],
-    [0, 0, 1, 0],
-    [0, 0, 0, 1]
+    1, 0, 0, 0,
+    0, 1, 0, 0,
+    0, 0, 1, 0,
+    0, 0, 0, 1
   ]);
-  drawModel(gl, octahedron, projectionMatrixExample);
+  drawModel(gl, model, projectionMatrixExample);
 }
 
 /** Ngegambar satu model. 
@@ -57,13 +59,9 @@ function main() {
   */
 function drawModel(gl, model, projectionMatrix) {
   gl.uniformMatrix4fv(projectionMatrixLocation, false, projectionMatrix);
-  for(let i = 0; i < model.length; i += 3){
-    // Satu vertex itu tiga elemen
-    // Ini ngambil 3 vertex
-    // Jadi ngambil 9 elemen
-    // Dan didisplay dengan cara Triangle Fan
-    // Perlu disesuaikan dengan cara kita bikin model
-    gl.drawArrays(gl.TRIANGLE_FAN, i, 3);
+  let vertexCount = 4;
+  for(let idxPermukaan = 0; idxPermukaan < model.length / vertexCount / 3; idxPermukaan++){
+    gl.drawArrays(gl.TRIANGLE_FAN, idxPermukaan * vertexCount, vertexCount);
   }
 }
 

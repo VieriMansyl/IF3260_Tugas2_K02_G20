@@ -15,7 +15,7 @@ varying vec4 f_color;
 
 void main(){
   // Nanti dikalikan aja dengan matrix-matrix transformasinya
-  gl_Position = vec4(vertex_position, 1.0);
+  gl_Position = matrix_projection * vec4(vertex_position, 1.0);
   f_color = vec4(vertex_color, 1.0);
 }`;
 
@@ -53,7 +53,6 @@ export function getWebGLContext(canvas) {
  */
 export function setupWebGL(gl, vertex, color) {
   const program = initShaders(gl, vertexShader, fragmentShader);
-
   // Karena objeknya konstan, kita bisa ngisi buffernya langsung dengan vertex
   // Semua perhitungan nanti akan dilakukan di vertex shader bersamaan dengan
   // matriks-matriks lain.
@@ -80,6 +79,7 @@ function initBuffer(gl, type, data) {
 
   gl.bindBuffer(type, buffer);
   gl.bufferData(type, data, gl.STATIC_DRAW);
+  gl.bindBuffer(type, null);
 
   return buffer;
 }
