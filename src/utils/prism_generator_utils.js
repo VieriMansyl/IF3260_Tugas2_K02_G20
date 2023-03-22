@@ -1,3 +1,4 @@
+import { degToRad, vectorOperator, remainder } from "./math_utils.js";
 /** Prism Generator
  * Ngebikin Prisma. Ada 5 jenis vertex
  *  - True Outer
@@ -155,7 +156,7 @@ export class HollowPrism {
       for(let i = 0; i < nSide; i++){
         let vertex = verticesArray[isPrismBottom][i];
         let currSideVertex = vertex[this.#vertexType.TRUE_OUTER];
-        let nextSideVertex = verticesArray[isPrismBottom][this.#remainder(i + sideOffset, nSide)][this.#vertexType.TRUE_OUTER];
+        let nextSideVertex = verticesArray[isPrismBottom][remainder(i + sideOffset, nSide)][this.#vertexType.TRUE_OUTER];
         let nextTBVertex   = verticesArray[(isPrismBottom + 1) % 2][i][this.#vertexType.TRUE_OUTER];
         let relativeVector = this.#pointAddition(this.#partVector(this.#pointDifference(nextSideVertex, currSideVertex), a), 
           this.#partVector(this.#pointDifference(nextTBVertex, currSideVertex), a))
@@ -208,7 +209,7 @@ export class HollowPrism {
       // Untuk tiap vertex
       for(let i = 0; i < nSide; i++){
         let currVertex = verticesArray[isPrismBottom][i];
-        let nextVertex = verticesArray[isPrismBottom][this.#remainder(i + 1, nSide)];
+        let nextVertex = verticesArray[isPrismBottom][remainder(i + 1, nSide)];
 
         indices = indices.concat(
           currVertex[this.#vertexType.TRUE_OUTER],
@@ -249,7 +250,7 @@ export class HollowPrism {
       // Untuk tiap vertex
     for(let i = 0; i < nSide; i++){
       let currVertex = verticesArray[isPrismBottom][i];
-      let nextVertex = verticesArray[this.#remainder(isPrismBottom + 1, 2)][i];
+      let nextVertex = verticesArray[remainder(isPrismBottom + 1, 2)][i];
 
       indices = indices.concat(
         currVertex[this.#vertexType.TRUE_OUTER],
@@ -287,30 +288,16 @@ export class HollowPrism {
     return ((a % b) + b) % b;
   }
 
-  /** Operasi terhadap tiap komponen point. */
-  static #pointOperator(p1, p2, operator){
-    return [...Array(Math.min(p1.length, p2.length)).keys()].map(num => {return operator(p1[num], p2[num])});
-  }
-
   /** Operasi kurang terhadap tiap komponen point. */
   static #pointDifference(p1, p2){
-    return this.#pointOperator(p1, p2, (num1, num2) => { return num1 - num2 })
+    return vectorOperator(p1, p2, (num1, num2) => { return num1 - num2 })
   }
 
   /** Operasi tambah terhadap tiap komponen point. */
   static #pointAddition(p1, p2){
-    return this.#pointOperator(p1, p2, (num1, num2) => { return num1 + num2 })
+    return vectorOperator(p1, p2, (num1, num2) => { return num1 + num2 })
   }
-  //
-  // /** Operasi kali terhadap tiap komponen point. */
-  // static #pointMultiplication(p1, p2){
-  //   return this.#pointOperator(p1, p2, (num1, num2) => { return num1 * num2 })
-  // }
-  //
-  // /** Operasi bagi terhadap tiap komponen point. */
-  // static #pointDivision(p1, p2){
-  //   return this.#pointOperator(p1, p2, (num1, num2) => { return num1 / num2 })
-  // }
+
   /** Vektor dengan panjang partLength dan arah vector */
   static #partVector(vector, partLength){
     let vL = this.#vectorLength(vector);
@@ -326,9 +313,4 @@ export class HollowPrism {
     }, 0));
   }
   
-}
-
-/** Mengonversi degree ke radian */
-function degToRad(degree){
-  return degree * (Math.PI / 180);
 }
