@@ -75,7 +75,7 @@ function setModel(type) {
     // model.vertices = cube.vertices;
   } else if (type === "prism") {
     model.type = "prism";
-    model.vertices = pentagonalPrism.vertices;
+    model.vertices = pentagonalPrism;
   } else if (type === "octa") {
     model.type = "octahedron";
     model.vertices = octahedron;
@@ -153,8 +153,30 @@ function render() {
   }
 
   // draw
-  const vertexCount = model.vertices.length / 3;
-  gl.drawArrays(gl.TRIANGLES, 0, vertexCount);
+  // Karena gambarnya per segitiga, gak bisa langsung triangle fan banyak gitu
+  drawModel(gl, model.vertices);
+  
+  // const vertexCount = model.vertices.length / 3;
+  // gl.drawArrays(gl.TRIANGLES, 0, vertexCount);
+}
+
+/** Ngegambar model.
+  * Sebelum itu, perlu diketahui:
+  *  - Berapa banyak titik? Ini dari length / 3
+  *  - Berapa banyak permukaan? Kita ngegambarnya pakai segitiga, jadinya sekali ngegambar kita menggunakan 
+  *    3 titik (inilah variable vertexCount). Total permukaan adalah length / 3.
+  * @param gl - WebGL Context
+  * @param model - array yang isinya HANYA vertex model. Array ini HARUS 1D.
+  */
+function drawModel(gl, model){
+  // Setiap permukaan menggunakan sebanyak vertexCount titik 
+  let vertexCount = 3;
+  // Ini menggambar setiap permukaan. 
+  // Oleh karena itu, digambar sampai model.length / 3 / vertexCount
+  for(let idxPermukaan = 0; idxPermukaan < model.length / vertexCount / 3; idxPermukaan++){
+    // Menggambar satu segitiga
+    gl.drawArrays(gl.TRIANGLE_FAN, idxPermukaan * vertexCount, vertexCount);
+  }
 }
 
 function clearCanvas() {

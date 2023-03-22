@@ -2,7 +2,7 @@
 const vertexShaderScript = `
   precision mediump float;
 
-  attribute vec4 a_position;
+  attribute vec3 a_position;
   attribute vec4 a_color;
   attribute vec3 a_normal;
 
@@ -16,7 +16,7 @@ const vertexShaderScript = `
   uniform highp vec3 vdirectional;
 
   void main(void) {
-    gl_Position = u_projection * u_modelview * u_world * a_position;
+    gl_Position = u_projection * u_modelview * u_world * vec4(a_position, 1.0);
     vColor = a_color;
 
     highp vec4 transformedNormal = u_normal * vec4(a_normal, 1.0);    
