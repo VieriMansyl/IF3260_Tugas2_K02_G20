@@ -89,6 +89,6 @@ function setModelTranslation(x, y, z) {
 
 function setModelScaling(val) {
   const scaleValue = document.querySelector("#scaling-value");
-  scaleValue.innerHTML = val;
+  scaleValue.innerHTML = 0.5 + Number(val);
   return TransformationMatrix.getUniformScaleMatrix(val);
 }

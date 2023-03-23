@@ -308,6 +308,43 @@ export class HollowPrism {
     */
   static #convert4VSurface(vertexArray, v1, v2, v3, v4, noReverse){
     if (noReverse){
+      return this.splitSurface(vertexArray, v1, v2, v3, v4, 1, 1);
+    } else {
+      return this.splitSurface(vertexArray, v4, v3, v2, v1, 1, 1);
+    }
+  }
+
+  /** Membagi surface supaya lebih high-poly */
+  static splitSurface(vertexArray, v1, v2, v3, v4, splitNumVertical, splitNumHorizontal){
+    if (splitNumVertical === 0){
+      return this.splitHorizontal(vertexArray, v1, v2, v3, v4, splitNumHorizontal);
+    } else {
+      let newV3 = this.#pointAddition(this.#pointDifference(v3, v2).map(
+        element => { 
+          return element / (splitNumVertical + 1)
+        }
+      ), v2);
+      let newV4 = this.#pointAddition(this.#pointDifference(v4, v1).map(
+        element => {
+          return element / (splitNumVertical + 1)
+        }
+      ), v1);
+      let newVertexArray = this.splitHorizontal(vertexArray, v1, v2, newV3, newV4, splitNumHorizontal);
+      return this.splitSurface(
+        newVertexArray,
+        newV4,
+        newV3,
+        v3,
+        v4,
+        splitNumVertical - 1,
+        splitNumHorizontal
+      )
+    }
+  }
+
+  /** Membagi poligon ke yang lebih banyak secara horizontal */
+  static splitHorizontal(vertexArray, v1, v2, v3, v4, splitNum){
+    if (splitNum === 0){
       return vertexArray.concat(
         v1,
         v2,
@@ -318,14 +355,33 @@ export class HollowPrism {
         v4
       )
     } else {
-      return vertexArray.concat(
-        v4,
-        v3,
-        v2,
+      let newV2 = this.#pointAddition(this.#pointDifference(v2, v1).map(
+        element => {
+          return element / (splitNum + 1)
+        }
+      ), v1);
+      let newV3 = this.#pointAddition(this.#pointDifference(v4, v3).map(
+        element => {
+          return element / (splitNum + 1)
+        }
+      ), v3);
+      let newVertexArray = vertexArray.concat(
+        v1,
+        newV2,
+        newV3,
 
-        v4,
+        v1,
+        newV3,
+        v4
+      )
+
+      return this.splitHorizontal(
+        newVertexArray,
+        newV2,
         v2,
-        v1
+        v3,
+        newV3,
+        splitNum - 1
       )
     }
   }
