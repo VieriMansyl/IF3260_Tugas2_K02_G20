@@ -1,3 +1,13 @@
+
+const setOrthographicProjection = () => {
+  return [
+    1.0, 0.0, 0.0, 0.0,
+    0.0, 1.0, 0.0, 0.0,
+    0.0, 0.0, 1.0, 0.0,
+    0.0, 0.0, 0.0, 1.0,
+  ]
+};
+
 const setPerspectiveProjection = (canvas) => {
   // Calculate constants
   var aspectRatio = canvas.width / canvas.height;

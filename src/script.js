@@ -12,63 +12,14 @@ const scale = document.querySelector('#scaling');
 const translateX = document.querySelector('#translation-x');
 const translateY = document.querySelector('#translation-y');
 const translateZ = document.querySelector('#translation-z');
+const cameraRotate = document.querySelector("#camera-rotate");
+const cameraView = document.querySelector("#camera-view");
 const hollowObjectPicker = document.querySelector('#hollow-object');
 
 // INITIALIZE
 let canvas = document.querySelector('#canvas');
 let gl = getWebGLContext(canvas);
 
-/* model's data :
-  @param type : "cube" | "pentagonalPrism" | "octahedron"
-  @param vertices : model's vertices
-  @param colors : model's colors
-  @param normals : model's normals
-  @param programInfo : model's program info
-  @param bufferInfo : model's buffer info
-*/
-var model = {
-  type: '',
-  vertices: [],
-  colors: [],
-  normals: [],
-  programInfo: {},
-  bufferInfo: {},
-  animate: false,
-};
-
-// -----------------------------------
-let normals_mat = [
-  1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0,
-  0.0,
-];
-let world_mat = [
-  1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0,
-  1.0,
-];
-let mv_mat = [
-  1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0,
-  1.0,
-];
-let projection_mat = [
-  1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0,
-  1.0,
-];
-
-let translate_mat = [
-  1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0,
-  1.0,
-];
-
-let rotate_mat = [
-  1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0,
-  1.0,
-];
-
-let scale_mat = [
-  0.5, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0,
-  1.0,
-];
-// -----------------------------------
 
 function setProgram(isShading) {
   var shaderProgram = createProgram(gl, isShading);
@@ -107,15 +58,7 @@ function setModel(type) {
 
 function setProjection(type) {
   if (type === 'orthographic') {
-    projection_mat = [
-      1, 0.0, 0.0, 0.0,
-
-      0.0, 1, 0.0, 0.0,
-
-      0.0, 0.0, 1, 0,
-
-      0.0, 0.0, 0.0, 1,
-    ];
+    projection_mat = setOrthographicProjection();
   } else if (type === 'oblique') {
   } else if (type === 'perspective') {
     projection_mat = setPerspectiveProjection(canvas);
@@ -163,6 +106,9 @@ const main = () => {
   // set model shown by default
   setModel('octahedron');
 
+  // set projection shown by default
+  setProjection('orthographic');
+
   // --------------- MAIN LOOP ---------------
   eventHandler();
   render();
@@ -196,38 +142,17 @@ function render() {
   {
     // set model's position buffer
     gl.bindBuffer(gl.ARRAY_BUFFER, model.bufferInfo.positionBuffer);
-    gl.vertexAttribPointer(
-      model.programInfo.a_loc.vertexPosition,
-      3,
-      gl.FLOAT,
-      false,
-      0,
-      0
-    );
+    gl.vertexAttribPointer(model.programInfo.a_loc.vertexPosition,3,gl.FLOAT,false,0,0);
     gl.enableVertexAttribArray(model.programInfo.a_loc.vertexPosition);
 
     // set model's color buffer
     gl.bindBuffer(gl.ARRAY_BUFFER, model.bufferInfo.colorBuffer);
-    gl.vertexAttribPointer(
-      model.programInfo.a_loc.vertexColor,
-      4,
-      gl.FLOAT,
-      false,
-      0,
-      0
-    );
+    gl.vertexAttribPointer(model.programInfo.a_loc.vertexColor,4,gl.FLOAT,false,0,0);
     gl.enableVertexAttribArray(model.programInfo.a_loc.vertexColor);
 
     // set model's normal buffer
     gl.bindBuffer(gl.ARRAY_BUFFER, model.bufferInfo.normalBuffer);
-    gl.vertexAttribPointer(
-      model.programInfo.a_loc.vertexNormal,
-      3,
-      gl.FLOAT,
-      false,
-      0,
-      0
-    );
+    gl.vertexAttribPointer(model.programInfo.a_loc.vertexNormal,3,gl.FLOAT,false,0,0);
     gl.enableVertexAttribArray(model.programInfo.a_loc.vertexNormal);
   }
 
@@ -236,26 +161,10 @@ function render() {
 
   {
     // Set uniforms
-    gl.uniformMatrix4fv(
-      model.programInfo.u_matrix.normalMatrix,
-      false,
-      normals_mat
-    );
-    gl.uniformMatrix4fv(
-      model.programInfo.u_matrix.worldMatrix,
-      false,
-      world_mat
-    );
-    gl.uniformMatrix4fv(
-      model.programInfo.u_matrix.modelViewMatrix,
-      false,
-      mv_mat
-    );
-    gl.uniformMatrix4fv(
-      model.programInfo.u_matrix.projectionMatrix,
-      false,
-      projection_mat
-    );
+    gl.uniformMatrix4fv(model.programInfo.u_matrix.normalMatrix,false,normals_mat);
+    gl.uniformMatrix4fv(model.programInfo.u_matrix.worldMatrix,false,world_mat);
+    gl.uniformMatrix4fv(model.programInfo.u_matrix.modelViewMatrix,false,mv_mat);
+    gl.uniformMatrix4fv(model.programInfo.u_matrix.projectionMatrix,false,projection_mat);
 
     // set light direction
     gl.uniform3fv(model.programInfo.u_matrix.directionalVector, [1, 1, 1]);
@@ -399,30 +308,28 @@ function eventHandler() {
   });
 
   // translation
-
   translateX.addEventListener('input', () => {
-    translate_mat = setModelTranslation(
-      translateX.value,
-      translateY.value,
-      translateZ.value
-    );
+    translate_mat = setModelTranslation(translateX.value, translateY.value, translateZ.value);
   });
 
   translateY.addEventListener('input', () => {
-    translate_mat = setModelTranslation(
-      translateX.value,
-      translateY.value,
-      translateZ.value
-    );
+    translate_mat = setModelTranslation(translateX.value, translateY.value, translateZ.value);
   });
 
   translateZ.addEventListener('input', () => {
-    translate_mat = setModelTranslation(
-      translateX.value,
-      translateY.value,
-      translateZ.value
-    );
+    translate_mat = setModelTranslation(translateX.value, translateY.value, translateZ.value);
   });
+
+  // ---- CAMERA ----
+  // camera rotate
+  cameraRotate.addEventListener( "input", () => {
+    // TODO
+  } )
+  // camera view
+  cameraView.addEventListener( "input", () => {
+    // TODO
+  } )
+
 
   // model picker
   hollowObjectPicker.addEventListener('click', (e) => {
@@ -444,11 +351,7 @@ function eventHandler() {
     'change',
     () => {
       let projection = projectionPicker.value;
-      console.log(projection);
-      console.log(projection_mat);
       setProjection(projection);
-      console.log(projection_mat);
-
       window.requestAnimationFrame(render);
     },
     false

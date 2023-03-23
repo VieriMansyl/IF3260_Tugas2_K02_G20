@@ -10,8 +10,6 @@ const matrix4Translation = (tx, ty, tz) => {
   return [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, tx, ty, tz, 1];
 };
 
-const matrix4Inverse = (mat) => {};
-
 // Count rotation
 const rotateCamera = (cameraAngleRadian, radius) => {
   let cameraMatrix = rotateY(cameraAngleRadians);
