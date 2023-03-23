@@ -151,7 +151,7 @@ const main = () => {
 
   // --------------- MAIN LOOP ---------------
   eventHandler();
-  window.requestAnimationFrame(render);
+  render();
   // -----------------------------------------
 }
 
@@ -161,7 +161,7 @@ function render() {
   clearCanvas();
 
   // animation
-  if (model.animate && model.timeoutIdle) {
+  if (model.animate) {
     const deltaX = 1;
     const deltaY = 1;
     const deltaZ = 1;
@@ -279,7 +279,7 @@ function reset() {
   document.querySelector("#camera-view").value = 0.5;
   // TODO : reset camera matrix
   
-  window.requestAnimationFrame(render);
+  render();
 }
 
 function setRotationSlider(x,y,z) {
@@ -309,19 +309,16 @@ function eventHandler() {
   // Shading checkbox
   shadingbox.addEventListener("change", () => {
     setProgram(shadingbox.checked);
-    window.requestAnimationFrame(render);
   });
 
   // color picker
   colorpicker.addEventListener("change", () => {
     setModelColor();
-    window.requestAnimationFrame(render);
   });
 
   // reset button
   resetbtn.addEventListener("click", () => {
     reset();
-    window.requestAnimationFrame(render);
   });
 
   // help button
@@ -337,40 +334,33 @@ function eventHandler() {
   // rotation
   rotateX.addEventListener( "input", () => {
     rotate_mat = setModelRotation(rotateX.value, rotateY.value, rotateZ.value);
-    window.requestAnimationFrame(render);
   } )
   
   rotateY.addEventListener( "input", () => {
     rotate_mat = setModelRotation(rotateX.value, rotateY.value, rotateZ.value);
-    window.requestAnimationFrame(render);
   } )
   
   rotateZ.addEventListener( "input", () => {
     rotate_mat = setModelRotation(rotateX.value, rotateY.value, rotateZ.value);
-    window.requestAnimationFrame(render);
   } )
 
   // scaling
   scale.addEventListener( "input", () => {
     scale_mat = setModelScaling(scale.value);
-    window.requestAnimationFrame(render);
   } )
 
   // translation
 
   translateX.addEventListener( "input", () => {
     translate_mat = setModelTranslation(translateX.value, translateY.value, translateZ.value);
-    window.requestAnimationFrame(render);
   } )
 
   translateY.addEventListener( "input", () => {
     translate_mat = setModelTranslation(translateX.value, translateY.value, translateZ.value);
-    window.requestAnimationFrame(render);
   } )
 
   translateZ.addEventListener( "input", () => {
     translate_mat = setModelTranslation(translateX.value, translateY.value, translateZ.value);
-    window.requestAnimationFrame(render);
   } )
 
   // model picker
@@ -379,7 +369,6 @@ function eventHandler() {
       setModel(e.target.alt);
       console.log(e.target.alt);
     }
-    window.requestAnimationFrame(render);
   });
 
   // animation box
@@ -387,16 +376,16 @@ function eventHandler() {
   animateBox.addEventListener("change", () => {
     model.animate = animateBox.checked;
   });
-
-  function callbackBodyTimer() {
-      model.timeoutIdle = false;
-      var timer;
-      clearTimeout(timer);
-      timer = setTimeout(
-        () =>  { model.timeoutIdle = true; }
-      , 0)
-  }
-  document.body.addEventListener("mouseup", callbackBodyTimer, false);
+  //
+  // function callbackBodyTimer() {
+  //     model.timeoutIdle = false;
+  //     var timer;
+  //     clearTimeout(timer);
+  //     timer = setTimeout(
+  //       () =>  { model.timeoutIdle = true; }
+  //     , 0)
+  // }
+  // document.body.addEventListener("mouseup", callbackBodyTimer, false);
 }
 
 function contains(parent, child) {
