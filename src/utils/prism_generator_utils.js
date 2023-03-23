@@ -232,15 +232,15 @@ export class HollowPrism {
           indices,
           currVertex[this.#vertexType.TRUE_INNER],
           nextVertex[this.#vertexType.TRUE_INNER],
-          nextVertex[this.#vertexType.INNER_CW],
-          currVertex[this.#vertexType.INNER_CCW],
+          nextVertex[this.#vertexType.INNER_CCW],
+          currVertex[this.#vertexType.INNER_CW],
           isBaseTop
         )
 
         indices = this.#convert4VSurface(
           indices,
-          currVertex[this.#vertexType.INNER_CCW],
-          nextVertex[this.#vertexType.INNER_CW],
+          currVertex[this.#vertexType.INNER_CW],
+          nextVertex[this.#vertexType.INNER_CCW],
           nextVertex[this.#vertexType.TRUE_OUTER],
           currVertex[this.#vertexType.TRUE_OUTER],
           isBaseTop
@@ -263,24 +263,6 @@ export class HollowPrism {
         indices,
         currVertex[this.#vertexType.TRUE_OUTER],
         nextVertex[this.#vertexType.TRUE_OUTER],
-        nextVertex[this.#vertexType.INNER_CCW],
-        currVertex[this.#vertexType.INNER_CCW],
-        isBaseTop
-      )
-
-      indices = this.#convert4VSurface(
-        indices,
-        currVertex[this.#vertexType.INNER_CCW],
-        nextVertex[this.#vertexType.INNER_CCW],
-        nextVertex[this.#vertexType.TRUE_INNER],
-        currVertex[this.#vertexType.TRUE_INNER],
-        isBaseTop
-      )
-
-      indices = this.#convert4VSurface(
-        indices,
-        currVertex[this.#vertexType.TRUE_INNER],
-        nextVertex[this.#vertexType.TRUE_INNER],
         nextVertex[this.#vertexType.INNER_CW],
         currVertex[this.#vertexType.INNER_CW],
         isBaseTop
@@ -290,6 +272,24 @@ export class HollowPrism {
         indices,
         currVertex[this.#vertexType.INNER_CW],
         nextVertex[this.#vertexType.INNER_CW],
+        nextVertex[this.#vertexType.TRUE_INNER],
+        currVertex[this.#vertexType.TRUE_INNER],
+        isBaseTop
+      )
+
+      indices = this.#convert4VSurface(
+        indices,
+        currVertex[this.#vertexType.TRUE_INNER],
+        nextVertex[this.#vertexType.TRUE_INNER],
+        nextVertex[this.#vertexType.INNER_CCW],
+        currVertex[this.#vertexType.INNER_CCW],
+        isBaseTop
+      )
+
+      indices = this.#convert4VSurface(
+        indices,
+        currVertex[this.#vertexType.INNER_CCW],
+        nextVertex[this.#vertexType.INNER_CCW],
         nextVertex[this.#vertexType.TRUE_OUTER],
         currVertex[this.#vertexType.TRUE_OUTER],
         isBaseTop
