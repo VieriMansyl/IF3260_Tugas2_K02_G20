@@ -38,7 +38,7 @@ canvas {
   height: 600px;
   display: block;
   margin: auto;
-  background-color: #3b3b3b;
+  background-color: #000;
 }
 
 #tools-container {
@@ -112,7 +112,7 @@ img:hover{
 #transformation-tool {
   display: flex;
   flex-direction: row;
-  gap: 5%;
+  gap: 7%;
   font-weight: bold;
 }
 

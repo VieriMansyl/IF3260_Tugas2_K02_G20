@@ -10,7 +10,7 @@ function remainder(a, b){
 
 /** Mengali banyak matriks 4x4. 
   * Matriks merupakan array berisi 16 elemen, BUKAN 2D array.
-  * @param ...mat1 - matriks secara bebrurutan dari kiri ke kanan
+  * @param ...mat - matriks secara bebrurutan dari kiri ke kanan
   */
 function multiMatrix4Multiplication(...mat){
   return mat.reduceRight(
@@ -33,7 +33,7 @@ function multiMatrix4Multiplication(...mat){
   * @param mat2 - matriks di bagian kanan perkalian 
   */
 function matrix4Multiplication(mat1, mat2){
-  return [...Array(Math.min(v1.length, v2.length)).keys()].map(
+  return [...Array(Math.min(mat1.length, mat2.length)).keys()].map(
     (elementIdx) => {
       let rowIdx = Math.floor(elementIdx / 4);
       let colIdx = remainder(elementIdx, 4);

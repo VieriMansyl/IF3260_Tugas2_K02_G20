@@ -22,8 +22,8 @@ const vertexShaderScript = `
     highp vec4 transformedNormal = u_normal * u_modelview * vec4(a_normal, 1.0);    
     highp float directional = max(dot(transformedNormal.xyz, vdirectional), 0.0);
 
-    highp vec3 ambientLight = vec3(0.3, 0.3, 0.3);
-    highp vec3 directionalLightColor = vec3(1, 1, 1);
+    highp vec3 ambientLight = vec3(0.25, 0.25, 0.25);
+    highp vec3 directionalLightColor = vec3(2, 2, 2);
 
     vLighting = ambientLight + (directionalLightColor * directional);
   }`;

@@ -1,16 +1,16 @@
-import { octahedron , pentagonalPrism } from "./assets/models.js"
+import { cube, pentagonalPrism, octahedron } from "./assets/models.js"
 
 // INITIALIZE
 let canvas = document.querySelector("#canvas");
 let gl = getWebGLContext(canvas);
 
 /* model's data :
-  @type : "cube" | "pentagonalPrism" | "octahedron"
-  @vertices : model's vertices
-  @colors : model's colors
-  @normals : model's normals
-  @programInfo : model's program info
-  @bufferInfo : model's buffer info
+  @param type : "cube" | "pentagonalPrism" | "octahedron"
+  @param vertices : model's vertices
+  @param colors : model's colors
+  @param normals : model's normals
+  @param programInfo : model's program info
+  @param bufferInfo : model's buffer info
 */
 var model = {
   type: "",
@@ -21,31 +21,52 @@ var model = {
   bufferInfo: {},
 };
 
-// ----------- DUMMY DATA ------------
-const normals_mat = [
+// -----------------------------------
+let normals_mat = [
+    1.0, 0.0, 0.0, 0.0,
+    0.0, 1.0, 0.0, 0.0,
     0.0, 0.0, 1.0, 0.0,
-    0.0, 0.0, 1.0, 0.0,
-    0.0, 0.0, 1.0, 0.0,
-    0.0, 0.0, 1.0, 0.0,
-]
-const world_mat =[
+    0.0, 0.0, 0.0, 0.0,
+];
+let world_mat =[
     1.0, 0.0, 0.0, 0.0,
     0.0, 1.0, 0.0, 0.0,
     0.0, 0.0, 1.0, 0.0,
     0.0, 0.0, 0.0, 1.0,
-]
+];
 let mv_mat =[
     1.0, 0.0, 0.0, 0.0,
     0.0, 1.0, 0.0, 0.0,
     0.0, 0.0, 1.0, 0.0,
     0.0, 0.0, 0.0, 1.0,
-]
-const projection_mat =[
+];
+let projection_mat =[
     1.0, 0.0, 0.0, 0.0,
     0.0, 1.0, 0.0, 0.0,
     0.0, 0.0, 1.0, 0.0,
     0.0, 0.0, 0.0, 1.0,
-]
+];
+
+let translate_mat = [
+    1.0, 0.0, 0.0, 1.0,
+    0.0, 1.0, 0.0, 1.0,
+    0.0, 0.0, 1.0, 1.0,
+    0.0, 0.0, 0.0, 1.0,
+];
+
+let rotate_mat = [
+    1.0, 0.0, 0.0, 1.0,
+    0.0, 1.0, 0.0, 1.0,
+    0.0, 0.0, 1.0, 1.0,
+    0.0, 0.0, 0.0, 1.0,
+];
+
+let scale_mat = [
+    1.0, 0.0, 0.0, 1.0,
+    0.0, 1.0, 0.0, 1.0,
+    0.0, 0.0, 1.0, 1.0,
+    0.0, 0.0, 0.0, 1.0,
+];
 // -----------------------------------
 
 
@@ -72,7 +93,7 @@ function setModel(type) {
   model.vertices = [];
   if (type === "cube") {
     model.type = "cube";
-    // model.vertices = cube.vertices;
+    model.vertices = cube;
   } else if (type === "prism") {
     model.type = "prism";
     model.vertices = pentagonalPrism;
@@ -82,7 +103,6 @@ function setModel(type) {
   }
   setModelColor();
   model.normals = setNormalFor(model.vertices);
-  setBufferInfo();
 }
 
 function setModelColor() {
@@ -100,6 +120,11 @@ function setBufferInfo() {
     colorBuffer : initBuffer(gl, gl.ARRAY_BUFFER, new Float32Array(model.colors)),
     normalBuffer : initBuffer(gl, gl.ARRAY_BUFFER, new Float32Array(model.normals))
   }
+}
+
+function setModelViewMatrix() {
+  mv_mat = multiMatrix4Multiplication(translate_mat, scale_mat, rotate_mat);
+  console.log(mv_mat);
 }
 
 const main = () => {  
@@ -120,6 +145,13 @@ const main = () => {
 function render() {
   // clear canvas
   clearCanvas();
+
+  // set modelview matrix
+  setModelViewMatrix();
+
+  // set model's buffer
+  setBufferInfo();
+
   {
     // set model's position buffer
     gl.bindBuffer(gl.ARRAY_BUFFER, model.bufferInfo.positionBuffer);
@@ -152,12 +184,7 @@ function render() {
       model.programInfo.u_matrix.directionalVector, [1, 1, 1]);
   }
 
-  // draw
-  // Karena gambarnya per segitiga, gak bisa langsung triangle fan banyak gitu
   drawModel(gl, model.vertices);
-  
-  // const vertexCount = model.vertices.length / 3;
-  // gl.drawArrays(gl.TRIANGLES, 0, vertexCount);
 }
 
 /** Ngegambar model.
@@ -196,11 +223,24 @@ function clearCanvas() {
   resizeCanvasToDisplaySize(gl.canvas);
   gl.viewport(0, 0, canvas.width, canvas.height);
 
-  gl.clearColor(0.231, 0.231, 0.231, 1);  // clear to canvas default color (#3b3b3b)
+  gl.clearColor(0,0,0, 1);  // clear to canvas default color (#3b3b3b)
   gl.clearDepth(1);
   gl.enable(gl.DEPTH_TEST);
   gl.depthFunc(gl.LEQUAL);
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+}
+
+function resetCanvas() {
+  // reset rotation slider
+  mv_mat = setModelRotation(0,0,0);
+  const rotate_x_slider = document.querySelector("#rotation-x");
+  const rotate_y_slider = document.querySelector("#rotation-y");
+  const rotate_z_slider = document.querySelector("#rotation-z");
+  rotate_x_slider.value = 0;
+  rotate_y_slider.value = 0;
+  rotate_z_slider.value = 0;
+  
+  window.requestAnimationFrame(render);
 }
 
 function eventHandler() {
@@ -218,6 +258,13 @@ function eventHandler() {
     window.requestAnimationFrame(render);
   });
 
+  // reset button
+  const resetbtn = document.querySelector("#reset");
+  resetbtn.addEventListener("click", () => {
+    resetCanvas();
+    window.requestAnimationFrame(render);
+  });
+
   // help button
   const helpbtn = document.querySelector("#help");
   helpbtn.addEventListener("click", () => {
@@ -229,24 +276,54 @@ function eventHandler() {
     document.querySelector("#help-container").style.display = "none";
   });
 
+  // ---- TRANSFORMATION ----
+  // rotation
   const rotateX = document.querySelector("#rotation-x");
+  const rotateY = document.querySelector("#rotation-y");
+  const rotateZ = document.querySelector("#rotation-z");
   rotateX.addEventListener( "input", () => {
-    setModelRotation();
+    rotate_mat = setModelRotation(rotateX.value, rotateY.value, rotateZ.value);
     window.requestAnimationFrame(render);
   } )
   
-  const rotateY = document.querySelector("#rotation-y");
   rotateY.addEventListener( "input", () => {
-    setModelRotation();
+    rotate_mat = setModelRotation(rotateX.value, rotateY.value, rotateZ.value);
     window.requestAnimationFrame(render);
   } )
-
-  const rotateZ = document.querySelector("#rotation-z");
+  
   rotateZ.addEventListener( "input", () => {
-    setModelRotation();
+    rotate_mat = setModelRotation(rotateX.value, rotateY.value, rotateZ.value);
     window.requestAnimationFrame(render);
   } )
 
+  // scaling
+  const scale = document.querySelector("#scaling");
+  scale.addEventListener( "input", () => {
+    scale_mat = setModelScaling(scale.value);
+    window.requestAnimationFrame(render);
+  } )
+
+  // translation
+  const translateX = document.querySelector("#translation-x");
+  const translateY = document.querySelector("#translation-y");
+  const translateZ = document.querySelector("#translation-z");
+
+  translateX.addEventListener( "input", () => {
+    translate_mat = setModelTranslation(translateX.value, translateY.value, translateZ.value);
+    window.requestAnimationFrame(render);
+  } )
+
+  translateY.addEventListener( "input", () => {
+    translate_mat = setModelTranslation(translateX.value, translateY.value, translateZ.value);
+    window.requestAnimationFrame(render);
+  } )
+
+  translateZ.addEventListener( "input", () => {
+    translate_mat = setModelTranslation(translateX.value, translateY.value, translateZ.value);
+    window.requestAnimationFrame(render);
+  } )
+
+  // model picker
   const hollowObjectPicker = document.querySelector("#hollow-object");
   hollowObjectPicker.addEventListener("click", e => {
     if(contains(hollowObjectPicker, e.target)){
@@ -255,17 +332,6 @@ function eventHandler() {
     }
     window.requestAnimationFrame(render);
   });
-}
-
-function setModelRotation(){
-  const rotateX = document.querySelector("#rotation-x");
-  const rotateY = document.querySelector("#rotation-y");
-  const rotateZ = document.querySelector("#rotation-z");
-  mv_mat = TransformationMatrix.getRotationMatrix(
-    rotateX.value - 180, 
-    rotateY.value - 180, 
-    rotateZ.value - 180
-  );
 }
 
 function contains(parent, child) {
