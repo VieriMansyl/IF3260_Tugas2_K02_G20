@@ -162,8 +162,20 @@ function render() {
 
   // animation
   if (model.animate && model.timeoutIdle) {
-    rotate_mat = setModelRotation(rotateX.value, Number(rotateY.value) + 0.1, Number(rotateZ.value) + 0.1);
-    setRotationSlider(rotateX.value, rotateY.value, rotateZ.value);
+    const deltaX = 1;
+    const deltaY = 1;
+    const deltaZ = 1;
+
+    setRotationSlider(
+      remainder(Number(rotateX.value) + 180, 360) - 180 + deltaX,
+      remainder(Number(rotateY.value) + 180, 360) - 180 + deltaY,
+      remainder(Number(rotateZ.value) + 180, 360) - 180 + deltaZ,
+    );
+    rotate_mat = setModelRotation(
+      rotateX.value, 
+      rotateY.value, 
+      rotateZ.value, 
+    );
   }
 
   // set modelview matrix
@@ -381,8 +393,8 @@ function eventHandler() {
       var timer;
       clearTimeout(timer);
       timer = setTimeout(
-        () => {model.timeoutIdle = true;}
-      , 2 * 1000)
+        () =>  { model.timeoutIdle = true; }
+      , 0)
   }
   document.body.addEventListener("mouseup", callbackBodyTimer, false);
 }
