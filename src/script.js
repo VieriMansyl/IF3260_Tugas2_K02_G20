@@ -90,6 +90,23 @@ function setModel(type) {
   model.normals = setNormalFor(model.vertices);
 }
 
+function setProjection(type) {
+  if (type === 'orthographic') {
+    projection_mat = [
+      1, 0.0, 0.0, 0.0,
+
+      0.0, 1, 0.0, 0.0,
+
+      0.0, 0.0, 1, 0,
+
+      0.0, 0.0, 0.0, 1,
+    ];
+  } else if (type === 'oblique') {
+  } else if (type === 'perspective') {
+    projection_mat = setPerspectiveProjection(canvas);
+  }
+}
+
 function setModelColor() {
   const pickedColor = getColor();
   const arr_colors = [];
@@ -371,6 +388,13 @@ function eventHandler() {
     window.requestAnimationFrame(render);
   });
 
+  // camera view
+  const cameraRotate = document.querySelector('#camera-rotate');
+  const cameraView = document.querySelector('#camera-view');
+  //cameraRotate.addEventListener('input' () => {
+
+  //})
+
   // model picker
   const hollowObjectPicker = document.querySelector('#hollow-object');
   hollowObjectPicker.addEventListener('click', (e) => {
@@ -380,6 +404,22 @@ function eventHandler() {
     }
     window.requestAnimationFrame(render);
   });
+
+  // projection picker
+  const projectionPicker = document.querySelector('#projection');
+  projectionPicker.addEventListener(
+    'change',
+    () => {
+      let projection = projectionPicker.value;
+      console.log(projection);
+      console.log(projection_mat);
+      setProjection(projection);
+      console.log(projection_mat);
+
+      window.requestAnimationFrame(render);
+    },
+    false
+  );
 }
 
 function contains(parent, child) {

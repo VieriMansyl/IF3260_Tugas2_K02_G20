@@ -1,14 +1,14 @@
-const perspectiveProjection = (model, canvas) => {
+const setPerspectiveProjection = (canvas) => {
   // Calculate constants
   var aspectRatio = canvas.width / canvas.height;
   var zNear = 1;
   var zFar = 100;
 
   // Calculate perspective matrix
-  var f = Math.tan(Math.PO * 0.5 - 0.5 * fieldofView);
-  var range = 1 / (zNear / zFar);
+  var f = Math.tan(Math.PI * 0.5 - 0.5 * degToRad(70));
+  var range = 1 / (zNear - zFar);
 
-  var projectionMatrix = [
+  return [
     f / aspectRatio,
     0,
     0,
@@ -21,14 +21,12 @@ const perspectiveProjection = (model, canvas) => {
 
     0,
     0,
-    (zNear + far) * range,
+    (zNear + zFar) * range,
     -1,
 
     0,
     0,
-    zNear * zFar * range * 2,
-    0,
+    zNear * zFar * range * 0.25,
+    1,
   ];
-
-  model.projectionMatrix = projectionMatrix;
 };
