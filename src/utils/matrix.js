@@ -35,11 +35,11 @@ function multiMatrix4Multiplication(...mat){
 function matrix4Multiplication(mat1, mat2){
   return [...Array(Math.min(mat1.length, mat2.length)).keys()].map(
     (elementIdx) => {
-      let rowIdx = Math.floor(elementIdx / 4);
-      let colIdx = remainder(elementIdx, 4);
+      let colIdx = Math.floor(elementIdx / 4);
+      let rowIdx = remainder(elementIdx, 4);
       return vectorDot(
-        getMatrixRow(mat1, colIdx, [4, 4]),
-        getMatrixCol(mat2, rowIdx, [4, 4]),
+        getMatrixRow(mat1, rowIdx, [4, 4]),
+        getMatrixCol(mat2, colIdx, [4, 4]),
       )
 
     }
@@ -48,12 +48,12 @@ function matrix4Multiplication(mat1, mat2){
 
 /** Dapetin kolom dari matrix yang bentuknya tidak dalam 2D */
 function getMatrixCol(mat, columnNumber, matrixDimension){
-  return mat.filter( element => { return remainder(element, matrixDimension[1]) == columnNumber; } )
+  return mat.filter( (_, idx) => { return remainder(idx, matrixDimension[1]) === columnNumber; } )
 }
 
 /** Dapetin kolom dari matrix yang bentuknya tidak dalam 2D */
 function getMatrixRow(mat, rowNumber, matrixDimension){
-  return mat.filter( element => { return Math.floor(element / matrixDimension[1]) == rowNumber; } )
+  return mat.filter( (_, idx) => { return Math.floor(idx / matrixDimension[1]) === rowNumber; } )
 }
 
 /** Operasi terhadap tiap komponen vector. */
