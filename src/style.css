@@ -100,11 +100,23 @@ img:hover{
 #shading-tool {
   display: flex;
   gap: 10px;
-  font-weight: bold;
   align-items: center;
+  font-weight: bold;
 }
 
 #shading-tool > #shading {
+  width: 20px;
+  height: 20px;
+}
+
+#animation-tool {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-weight: bold;
+}
+
+#animation-tool > #animation {
   width: 20px;
   height: 20px;
 }

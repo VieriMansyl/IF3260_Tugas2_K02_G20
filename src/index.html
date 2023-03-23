@@ -37,11 +37,15 @@
           </div>
           <div id="color-tool">
             Shape color
-            <input type="color" id="color-picker" name="color-picker"/>
+            <input type="color" id="color-picker" name="color-picker" value="#aaaaaa"/>
           </div>
           <div id="shading-tool">
             <label for="shading">Shading</label>
             <input type="checkbox" id="shading" value="shading" checked>
+          </div>
+          <div id="animation-tool">
+            <label for="animation">Animation</label>
+            <input type="checkbox" id="animation" value="animation">
           </div>
         </div>
         <div id="user-guide">
@@ -83,10 +87,10 @@
           </div>
           <div id="scaling-tool">
             <p>Scaling</p>
-            <input type="range" id="scaling" min="-1" max="1" step="0.1"/>
+            <input type="range" id="scaling" min="0.1" max="1" value="0.5" step="0.1"/>
             <p>
               (
-                <output id="scaling-value">0</output> times
+                <output id="scaling-value">1</output> times
               )
             </p>
           </div>
@@ -96,11 +100,11 @@
           <div id="camera-tool">
             <div id="camera-rotation-tool">
               <label for="camera-rotate">Rotate</label><br>
-              <input type="range" id="camera-rotate" value="180" min="0" max="360" step="1"/><br>
+              <input type="range" id="camera-rotate" value="0" min="-180" max="180" step="1"/><br>
             </div>
             <div id="camera-view-tool">
               <label for="camera-view">View</label><br>
-              <input type="range" id="camera-view" min="0" max="1" step="0.01"/>
+              <input type="range" id="camera-view" value="0.5" min="0" max="1" step="0.01"/>
             </div>
           </div>
         </div>

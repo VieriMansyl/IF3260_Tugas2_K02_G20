@@ -1,5 +1,19 @@
 import { cube, pentagonalPrism, octahedron } from "./assets/models.js"
 
+const shadingbox = document.querySelector("#shading");
+const colorpicker = document.querySelector("#color-picker");
+const resetbtn = document.querySelector("#reset");
+const helpbtn = document.querySelector("#help");
+const closebtn = document.querySelector("#close");
+const rotateX = document.querySelector("#rotation-x");
+const rotateY = document.querySelector("#rotation-y");
+const rotateZ = document.querySelector("#rotation-z");
+const scale = document.querySelector("#scaling");
+const translateX = document.querySelector("#translation-x");
+const translateY = document.querySelector("#translation-y");
+const translateZ = document.querySelector("#translation-z");
+const hollowObjectPicker = document.querySelector("#hollow-object");
+
 // INITIALIZE
 let canvas = document.querySelector("#canvas");
 let gl = getWebGLContext(canvas);
@@ -19,6 +33,7 @@ var model = {
   normals: [],
   programInfo: {},
   bufferInfo: {},
+  animate: false,
 };
 
 // -----------------------------------
@@ -62,9 +77,9 @@ let rotate_mat = [
 ];
 
 let scale_mat = [
-    1.0, 0.0, 0.0, 0.0,
-    0.0, 1.0, 0.0, 0.0,
-    0.0, 0.0, 1.0, 0.0,
+    0.5, 0.0, 0.0, 0.0,
+    0.0, 0.5, 0.0, 0.0,
+    0.0, 0.0, 0.5, 0.0,
     0.0, 0.0, 0.0, 1.0,
 ];
 // -----------------------------------
@@ -124,7 +139,6 @@ function setBufferInfo() {
 
 function setModelViewMatrix() {
   mv_mat = multiMatrix4Multiplication(translate_mat, scale_mat, rotate_mat);
-  console.log(mv_mat);
 }
 
 const main = () => {  
@@ -145,6 +159,12 @@ const main = () => {
 function render() {
   // clear canvas
   clearCanvas();
+
+  // animation
+  if (model.animate && model.timeoutIdle) {
+    rotate_mat = setModelRotation(rotateX.value, Number(rotateY.value) + 0.1, Number(rotateZ.value) + 0.1);
+    setRotationSlider(rotateX.value, rotateY.value, rotateZ.value);
+  }
 
   // set modelview matrix
   setModelViewMatrix();
@@ -184,24 +204,17 @@ function render() {
       model.programInfo.u_matrix.directionalVector, [1, 1, 1]);
   }
 
+  // DRAW MODEL
   drawModel(gl, model.vertices);
+
+  window.requestAnimationFrame(render);
 }
 
-/** Ngegambar model.
-  * Sebelum itu, perlu diketahui:
-  *  - Berapa banyak titik? Ini dari length / 3
-  *  - Berapa banyak permukaan? Kita ngegambarnya pakai segitiga, jadinya sekali ngegambar kita menggunakan 
-  *    3 titik (inilah variable vertexCount). Total permukaan adalah length / 3.
-  * @param gl - WebGL Context
-  * @param model - array yang isinya HANYA vertex model. Array ini HARUS 1D.
-  */
-function drawModel(gl, model){
+function drawModel(gl, model) {
   // Setiap permukaan menggunakan sebanyak vertexCount titik 
   let vertexCount = 3;
-  // Ini menggambar setiap permukaan. 
-  // Oleh karena itu, digambar sampai model.length / 3 / vertexCount
+  // Ini menggambar setiap permukaan.
   for(let idxPermukaan = 0; idxPermukaan < model.length / vertexCount / 3; idxPermukaan++){
-    // Menggambar satu segitiga
     gl.drawArrays(gl.TRIANGLE_FAN, idxPermukaan * vertexCount, vertexCount);
   }
 }
@@ -230,57 +243,86 @@ function clearCanvas() {
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 }
 
-function resetCanvas() {
+function reset() {
+  model.animate = false;
+  document.querySelector("#animation").checked = false;
+
   // reset rotation slider
-  mv_mat = setModelRotation(0,0,0);
-  const rotate_x_slider = document.querySelector("#rotation-x");
-  const rotate_y_slider = document.querySelector("#rotation-y");
-  const rotate_z_slider = document.querySelector("#rotation-z");
-  rotate_x_slider.value = 0;
-  rotate_y_slider.value = 0;
-  rotate_z_slider.value = 0;
+  rotate_mat = setModelRotation(0,0,0);
+  setRotationSlider(0,0,0);
+  
+  // reset translation slider
+  translate_mat = setModelTranslation(0,0,0);
+  setTranslationSlider(0,0,0);
+
+  // reset scale slider
+  scale_mat = setModelScaling(0.5);
+  setScaleSlider(0.5);
+
+  // reset camera rotate
+  document.querySelector("#camera-rotate").value = 0;
+  // TODO : reset camera matrix
+  
+  // reset camera view
+  document.querySelector("#camera-view").value = 0.5;
+  // TODO : reset camera matrix
   
   window.requestAnimationFrame(render);
 }
 
+function setRotationSlider(x,y,z) {
+  const rotate_x_slider = document.querySelector("#rotation-x");
+  const rotate_y_slider = document.querySelector("#rotation-y");
+  const rotate_z_slider = document.querySelector("#rotation-z");
+  rotate_x_slider.value = x;
+  rotate_y_slider.value = y;
+  rotate_z_slider.value = z;
+}
+
+function setTranslationSlider(x,y,z) {
+  const translate_x_slider = document.querySelector("#translation-x");
+  const translate_y_slider = document.querySelector("#translation-y");
+  const translate_z_slider = document.querySelector("#translation-z");
+  translate_x_slider.value = x;
+  translate_y_slider.value = y;
+  translate_z_slider.value = z;
+}
+
+function setScaleSlider(s) {
+  const scale_slider = document.querySelector("#scaling");
+  scale_slider.value = s;
+}
+
 function eventHandler() {
   // Shading checkbox
-  const shadingbox = document.querySelector("#shading");
   shadingbox.addEventListener("change", () => {
     setProgram(shadingbox.checked);
     window.requestAnimationFrame(render);
   });
 
   // color picker
-  const colorpicker = document.querySelector("#color-picker");
   colorpicker.addEventListener("change", () => {
     setModelColor();
     window.requestAnimationFrame(render);
   });
 
   // reset button
-  const resetbtn = document.querySelector("#reset");
   resetbtn.addEventListener("click", () => {
-    resetCanvas();
+    reset();
     window.requestAnimationFrame(render);
   });
 
   // help button
-  const helpbtn = document.querySelector("#help");
   helpbtn.addEventListener("click", () => {
     document.querySelector("#help-container").style.display = "inline";
   });
   
-  const closebtn = document.querySelector("#close");
   closebtn.addEventListener("click", () => {
     document.querySelector("#help-container").style.display = "none";
   });
 
   // ---- TRANSFORMATION ----
   // rotation
-  const rotateX = document.querySelector("#rotation-x");
-  const rotateY = document.querySelector("#rotation-y");
-  const rotateZ = document.querySelector("#rotation-z");
   rotateX.addEventListener( "input", () => {
     rotate_mat = setModelRotation(rotateX.value, rotateY.value, rotateZ.value);
     window.requestAnimationFrame(render);
@@ -297,16 +339,12 @@ function eventHandler() {
   } )
 
   // scaling
-  const scale = document.querySelector("#scaling");
   scale.addEventListener( "input", () => {
     scale_mat = setModelScaling(scale.value);
     window.requestAnimationFrame(render);
   } )
 
   // translation
-  const translateX = document.querySelector("#translation-x");
-  const translateY = document.querySelector("#translation-y");
-  const translateZ = document.querySelector("#translation-z");
 
   translateX.addEventListener( "input", () => {
     translate_mat = setModelTranslation(translateX.value, translateY.value, translateZ.value);
@@ -324,7 +362,6 @@ function eventHandler() {
   } )
 
   // model picker
-  const hollowObjectPicker = document.querySelector("#hollow-object");
   hollowObjectPicker.addEventListener("click", e => {
     if(contains(hollowObjectPicker, e.target)){
       setModel(e.target.alt);
@@ -332,6 +369,22 @@ function eventHandler() {
     }
     window.requestAnimationFrame(render);
   });
+
+  // animation box
+  const animateBox = document.querySelector("#animation");
+  animateBox.addEventListener("change", () => {
+    model.animate = animateBox.checked;
+  });
+
+  function callbackBodyTimer() {
+      model.timeoutIdle = false;
+      var timer;
+      clearTimeout(timer);
+      timer = setTimeout(
+        () => {model.timeoutIdle = true;}
+      , 2 * 1000)
+  }
+  document.body.addEventListener("mouseup", callbackBodyTimer, false);
 }
 
 function contains(parent, child) {
