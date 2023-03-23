@@ -161,10 +161,10 @@ function render() {
   clearCanvas();
 
   // animation
-  if (model.animate) {
-    const deltaX = 1;
-    const deltaY = 1;
-    const deltaZ = 1;
+  if (model.animate && model.timeoutIdle) {
+    const deltaX = 0.1;
+    const deltaY = 0.1;
+    const deltaZ = 0.1;
 
     setRotationSlider(
       remainder(Number(rotateX.value) + 180, 360) - 180 + deltaX,
@@ -376,16 +376,20 @@ function eventHandler() {
   animateBox.addEventListener("change", () => {
     model.animate = animateBox.checked;
   });
-  //
-  // function callbackBodyTimer() {
-  //     model.timeoutIdle = false;
-  //     var timer;
-  //     clearTimeout(timer);
-  //     timer = setTimeout(
-  //       () =>  { model.timeoutIdle = true; }
-  //     , 0)
-  // }
-  // document.body.addEventListener("mouseup", callbackBodyTimer, false);
+  
+  function callbackBodyTimer() {
+      model.timeoutIdle = false;
+      var timer;
+      clearTimeout(timer);
+      timer = setTimeout(
+        () =>  { model.timeoutIdle = true; }
+      , 0.5 * 1000)
+  }
+  document.body.addEventListener("mouseup", callbackBodyTimer, false);
+
+  document.body.addEventListener("mousedown",
+    () => {model.timeoutIdle = false;},
+    false)
 }
 
 function contains(parent, child) {
