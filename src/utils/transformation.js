@@ -4,14 +4,9 @@
 * @public getRotationMatrix
 * @public getScaleMatrix
 */
-class TransformationMatrixm {
-  /** Menghasilkan matrix translasi. 
-    * @param x - Besar translasi komponen x
-    * @param y - Besar translasi komponen y
-    * @param z - Besar translasi komponen z
-    * @returns Matrix Translasi berukuran 4x4
-    */
-  getTranslationMatrix(x, y, z){
+class TransformationMatrix {
+  // matrix translasi.
+  static getTranslationMatrix(x, y, z){
     return [
       1, 0, 0, x,
       0, 1, 0, y,
@@ -20,14 +15,8 @@ class TransformationMatrixm {
     ]
   }
 
-  /** Menghasilkan matrix rotasi. 
-    * Matrix ngambil dari https://en.wikipedia.org/wiki/Rotation_matrix#General_rotations
-    * @param x_degree - Besar rotasi terhadap sumbu x dalam derajat
-    * @param y_degree - Besar rotasi terhadap sumbu y dalam derajat
-    * @param z_degree - Besar rotasi terhadap sumbu z dalam derajat
-    * @returns Matrix Rotasi berukuran 4x4
-    */
-  getRotationMatrix(x_degree, y_degree, z_degree){
+  // matrix rotasi
+  static getRotationMatrix(x_degree, y_degree, z_degree){
     /** Besar rotasi terhadap sumbu x dalam radian */
     let x_rad = degToRad(x_degree);
     /** Besar rotasi terhadap sumbu y dalam radian */
@@ -46,7 +35,7 @@ class TransformationMatrixm {
       Math.sin(y_rad) * -1, 
         Math.sin(x_rad) * Math.cos(y_rad), 
         Math.cos(x_rad) * Math.cos(y_rad), 
-        1,
+        0,
       0, 
         0, 
         0, 
@@ -54,13 +43,8 @@ class TransformationMatrixm {
     ]
   }
 
-  /** Menghasilkan matrix scale. 
-    * @param x - Besar scale komponen x
-    * @param y - Besar scale komponen y
-    * @param z - Besar scale komponen z
-    * @returns Matrix Scale berukuran 4x4
-    */
-  getScaleMatrix(x, y, z){
+  // matrix scale
+  static getScaleMatrix(x, y, z){
     return [
       x, 0, 0, 0,
       0, y, 0, 0,
@@ -69,5 +53,42 @@ class TransformationMatrixm {
     ]
   }
 
+  // matrix uniform scale
+  static getUniformScaleMatrix(scale){
+    return [
+      scale, 0, 0, 0,
+      0, scale, 0, 0,
+      0, 0, scale, 0,
+      0, 0, 0, 1
+    ]
+  }
 
+}
+
+function setModelRotation(x, y, z) {
+  const rotateXvalue = document.querySelector("#rotation-x-value");
+  const rotateYvalue = document.querySelector("#rotation-y-value");
+  const rotateZvalue = document.querySelector("#rotation-z-value");
+  rotateXvalue.innerHTML = x;
+  rotateYvalue.innerHTML = y;
+  rotateZvalue.innerHTML = z;
+
+  return TransformationMatrix.getRotationMatrix(x,y,z);
+}
+
+function setModelTranslation(x, y, z) {
+  const translateXvalue = document.querySelector("#translation-x-value");
+  const translateYvalue = document.querySelector("#translation-y-value");
+  const translateZvalue = document.querySelector("#translation-z-value");
+  translateXvalue.innerHTML = x;
+  translateYvalue.innerHTML = y;
+  translateZvalue.innerHTML = z;
+
+  return TransformationMatrix.getTranslationMatrix(x,y,z);
+}
+
+function setModelScaling(val) {
+  const scaleValue = document.querySelector("#scaling-value");
+  scaleValue.innerHTML = val;
+  return TransformationMatrix.getUniformScaleMatrix(val);
 }

@@ -92,14 +92,14 @@ export class HollowPrism {
     */
   static #generateTrueOuter(nSide, radius, height, verticesArray, verticesArrayKey = this.#vertexType.TRUE_OUTER){
     // Untuk alas dan atas
-    for(let isPrismBottom = 0; isPrismBottom < 2; isPrismBottom++){
+    for(let isBaseTop = 0; isBaseTop < 2; isBaseTop++){
       // Untuk tiap vertex
       for(let i = 0; i < nSide; i++){
-        let vertex = verticesArray[isPrismBottom][i];
+        let vertex = verticesArray[isBaseTop][i];
         let theta = degToRad(360 / nSide * i);
         vertex[verticesArrayKey] = [
           radius * Math.cos(theta),
-          height * (isPrismBottom * 2 - 1) / 2,
+          height * (isBaseTop * 2 - 1) / 2,
           radius * Math.sin(theta),
         ];
       }
@@ -150,13 +150,13 @@ export class HollowPrism {
     */
   static #generateInnerSide(nSide, a, verticesArray, verticesArrayKey, sideOffset){
     // Untuk alas dan atas
-    for(let isPrismBottom = 0; isPrismBottom < 2; isPrismBottom++){
+    for(let isBaseTop = 0; isBaseTop < 2; isBaseTop++){
       // Untuk tiap vertex
       for(let i = 0; i < nSide; i++){
-        let vertex = verticesArray[isPrismBottom][i];
+        let vertex = verticesArray[isBaseTop][i];
         let currSideVertex = vertex[this.#vertexType.TRUE_OUTER];
-        let nextSideVertex = verticesArray[isPrismBottom][remainder(i + sideOffset, nSide)][this.#vertexType.TRUE_OUTER];
-        let nextTBVertex   = verticesArray[(isPrismBottom + 1) % 2][i][this.#vertexType.TRUE_OUTER];
+        let nextSideVertex = verticesArray[isBaseTop][remainder(i + sideOffset, nSide)][this.#vertexType.TRUE_OUTER];
+        let nextTBVertex   = verticesArray[(isBaseTop + 1) % 2][i][this.#vertexType.TRUE_OUTER];
         let relativeVector = this.#pointAddition(this.#partVector(this.#pointDifference(nextSideVertex, currSideVertex), a), 
           this.#partVector(this.#pointDifference(nextTBVertex, currSideVertex), a))
         vertex[verticesArrayKey] = this.#pointAddition(relativeVector, currSideVertex);
@@ -174,10 +174,10 @@ export class HollowPrism {
     */
   static #generateTrueInner(nSide, verticesArray){
     // Untuk alas dan atas
-    for(let isPrismBottom = 0; isPrismBottom < 2; isPrismBottom++){
+    for(let isBaseTop = 0; isBaseTop < 2; isBaseTop++){
       // Untuk tiap vertex
       for(let i = 0; i < nSide; i++){
-        let vertex = verticesArray[isPrismBottom][i];
+        let vertex = verticesArray[isBaseTop][i];
         let vertexCW = vertex[this.#vertexType.INNER_CW];
         let vertexTB = vertex[this.#vertexType.INNER_TB];
         vertex[this.#vertexType.TRUE_INNER] = [
@@ -204,50 +204,46 @@ export class HollowPrism {
   static #generateBaseIndices(nSide, verticesArray){
     let indices = []
     // Untuk alas dan atas
-    for(let isPrismBottom = 0; isPrismBottom < 2; isPrismBottom++){
+    for(let isBaseTop = 0; isBaseTop < 2; isBaseTop++){
       // Untuk tiap vertex
       for(let i = 0; i < nSide; i++){
-        let currVertex = verticesArray[isPrismBottom][i];
-        let nextVertex = verticesArray[isPrismBottom][remainder(i + 1, nSide)];
+        let currVertex = verticesArray[isBaseTop][i];
+        let nextVertex = verticesArray[isBaseTop][remainder(i + 1, nSide)];
 
-        indices = indices.concat(
+        indices = this.#convert4VSurface(
+          indices,
           currVertex[this.#vertexType.TRUE_OUTER],
+          nextVertex[this.#vertexType.TRUE_OUTER],
+          nextVertex[this.#vertexType.INNER_TB],
+          currVertex[this.#vertexType.INNER_TB],
+          isBaseTop
+        )
+
+        indices = this.#convert4VSurface(
+          indices,
           currVertex[this.#vertexType.INNER_TB],
           nextVertex[this.#vertexType.INNER_TB],
-
-          currVertex[this.#vertexType.TRUE_OUTER],
-          nextVertex[this.#vertexType.INNER_TB],
-          nextVertex[this.#vertexType.TRUE_OUTER],
+          nextVertex[this.#vertexType.TRUE_INNER],
+          currVertex[this.#vertexType.TRUE_INNER],
+          isBaseTop
         )
 
-        indices = indices.concat(
-          currVertex[this.#vertexType.TRUE_OUTER],
+        indices = this.#convert4VSurface(
+          indices,
+          currVertex[this.#vertexType.TRUE_INNER],
+          nextVertex[this.#vertexType.TRUE_INNER],
+          nextVertex[this.#vertexType.INNER_CCW],
+          currVertex[this.#vertexType.INNER_CW],
+          isBaseTop
+        )
+
+        indices = this.#convert4VSurface(
+          indices,
           currVertex[this.#vertexType.INNER_CW],
           nextVertex[this.#vertexType.INNER_CCW],
-
-          currVertex[this.#vertexType.TRUE_OUTER],
-          nextVertex[this.#vertexType.INNER_CCW],
           nextVertex[this.#vertexType.TRUE_OUTER],
-        )
-
-        indices = indices.concat(
-          currVertex[this.#vertexType.TRUE_INNER],
-          currVertex[this.#vertexType.INNER_TB],
-          nextVertex[this.#vertexType.INNER_TB],
-
-          currVertex[this.#vertexType.TRUE_INNER],
-          nextVertex[this.#vertexType.INNER_TB],
-          nextVertex[this.#vertexType.TRUE_INNER],
-        )
-
-        indices = indices.concat(
-          currVertex[this.#vertexType.TRUE_INNER],
-          currVertex[this.#vertexType.INNER_CW],
-          nextVertex[this.#vertexType.INNER_CCW],
-
-          currVertex[this.#vertexType.TRUE_INNER],
-          nextVertex[this.#vertexType.INNER_CCW],
-          nextVertex[this.#vertexType.TRUE_INNER],
+          currVertex[this.#vertexType.TRUE_OUTER],
+          isBaseTop
         )
       }
     }
@@ -257,53 +253,81 @@ export class HollowPrism {
   /** Bikin indices untuk rusuk di alas dan atas */
   static #generateSideIndices(nSide, verticesArray){
     let indices = []
-    let isPrismBottom = 0;
+    let isBaseTop = 1;
       // Untuk tiap vertex
     for(let i = 0; i < nSide; i++){
-      let currVertex = verticesArray[isPrismBottom][i];
-      let nextVertex = verticesArray[remainder(isPrismBottom + 1, 2)][i];
+      let currVertex = verticesArray[isBaseTop][i];
+      let nextVertex = verticesArray[remainder(isBaseTop + 1, 2)][i];
 
-      indices = indices.concat(
+      indices = this.#convert4VSurface(
+        indices,
         currVertex[this.#vertexType.TRUE_OUTER],
+        nextVertex[this.#vertexType.TRUE_OUTER],
+        nextVertex[this.#vertexType.INNER_CW],
+        currVertex[this.#vertexType.INNER_CW],
+        isBaseTop
+      )
+
+      indices = this.#convert4VSurface(
+        indices,
         currVertex[this.#vertexType.INNER_CW],
         nextVertex[this.#vertexType.INNER_CW],
-
-        currVertex[this.#vertexType.TRUE_OUTER],
-        nextVertex[this.#vertexType.INNER_CW],
-        nextVertex[this.#vertexType.TRUE_OUTER],
+        nextVertex[this.#vertexType.TRUE_INNER],
+        currVertex[this.#vertexType.TRUE_INNER],
+        isBaseTop
       )
 
-      indices = indices.concat(
-        currVertex[this.#vertexType.TRUE_OUTER],
+      indices = this.#convert4VSurface(
+        indices,
+        currVertex[this.#vertexType.TRUE_INNER],
+        nextVertex[this.#vertexType.TRUE_INNER],
+        nextVertex[this.#vertexType.INNER_CCW],
+        currVertex[this.#vertexType.INNER_CCW],
+        isBaseTop
+      )
+
+      indices = this.#convert4VSurface(
+        indices,
         currVertex[this.#vertexType.INNER_CCW],
         nextVertex[this.#vertexType.INNER_CCW],
-
-        currVertex[this.#vertexType.TRUE_OUTER],
-        nextVertex[this.#vertexType.INNER_CCW],
         nextVertex[this.#vertexType.TRUE_OUTER],
-      )
-
-      indices = indices.concat(
-        currVertex[this.#vertexType.TRUE_INNER],
-        currVertex[this.#vertexType.INNER_CW],
-        nextVertex[this.#vertexType.INNER_CW],
-
-        currVertex[this.#vertexType.TRUE_INNER],
-        nextVertex[this.#vertexType.INNER_CW],
-        nextVertex[this.#vertexType.TRUE_INNER],
-      )
-
-      indices = indices.concat(
-        currVertex[this.#vertexType.TRUE_INNER],
-        currVertex[this.#vertexType.INNER_CCW],
-        nextVertex[this.#vertexType.INNER_CCW],
-
-        currVertex[this.#vertexType.TRUE_INNER],
-        nextVertex[this.#vertexType.INNER_CCW],
-        nextVertex[this.#vertexType.TRUE_INNER],
+        currVertex[this.#vertexType.TRUE_OUTER],
+        isBaseTop
       )
     }
     return indices;
+  }
+  /** Mengubah surface yang didefinisikan oleh 4 vertex ke 3 vertex
+    * Urutkan secara Counter Clockwise, normal menuju kita
+    * @param indices - Kumpulan urutan vertex
+    * @param v1 - Vertex 3 dimensi
+    * @param v2 - Vertex 3 dimensi
+    * @param v3 - Vertex 3 dimensi
+    * @param v4 - Vertex 3 dimensi
+    * @param noReverse - Membalik urutan v1 sampai v4
+    */
+  static #convert4VSurface(vertexArray, v1, v2, v3, v4, noReverse){
+    if (noReverse){
+      return vertexArray.concat(
+        v1,
+        v2,
+        v3,
+
+        v1,
+        v3,
+        v4
+      )
+    } else {
+      return vertexArray.concat(
+        v4,
+        v3,
+        v2,
+
+        v4,
+        v2,
+        v1
+      )
+    }
   }
 
   /** Operasi kurang terhadap tiap komponen point. */

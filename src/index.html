@@ -1,30 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="shortcut icon" href="./assets/favicon.ico" type="image/x-icon">
-  <link rel="stylesheet" href="style.css" />
-  <title>3D Hollow Object</title>
-  <script src="utils/webgl_utils.js"></script>
-  <script src="utils/matrix.js"></script>
-  <script src="utils/normal.js"></script>
-  <script src="utils/projection.js"></script>
-  <script src="utils/transformation.js"></script>
-  <script src="script.js" type="module" defer></script>
-</head>
-<body>
-  <div id="container">
-    <div id="working-container">
-      <div id="canvas-container">
-        <canvas id="canvas" tabindex='1'></canvas>
-      </div>
-      <div id="tools-container">
-        <div id="hollow-object">
-          <img src = "./assets/icons/cube.png" alt="cube"/>
-          <img src = "./assets/icons/prism.png" alt="prism"/>
-          <img src = "./assets/icons/octahedron.png" alt="octahedron"/>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="./assets/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="style.css" />
+    <title>3D Hollow Object</title>
+    <script src="utils/webgl_utils.js"></script>
+    <script src="utils/matrix.js"></script>
+    <script src="utils/normal.js"></script>
+    <script src="utils/projection.js"></script>
+    <script src="utils/transformation.js"></script>
+    <script src="script.js" type="module" defer></script>
+  </head>
+  <body>
+    <div id="container">
+      <div id="working-container">
+        <div id="canvas-container">
+          <canvas id="canvas" tabindex="1"></canvas>
         </div>
         <div id="tools-container">
           <div id="hollow-object">
@@ -36,17 +30,9 @@
             <div id="projection-tool">
               <label for="projection">Proyeksi</label>
               <select name="projection" id="projection">
-                <option
-                  value="orthographic">
-                  Orthographic
-                </option>
-                <option value="oblique" >
-                  Oblique
-                </option>
-                <option
-                  value="perspective"> 
-                  Perspective
-                </option>
+                <option value="orthographic">Orthographic</option>
+                <option value="oblique">Oblique</option>
+                <option value="perspective">Perspective</option>
               </select>
             </div>
             <div id="color-tool">
@@ -55,12 +41,12 @@
             </div>
             <div id="shading-tool">
               <label for="shading">Shading</label>
-              <input type="checkbox" id="shading" />
+              <input type="checkbox" id="shading" value="shading" checked />
             </div>
           </div>
-          <div id="shading-tool">
-            <label for="shading">Shading</label>
-            <input type="checkbox" id="shading" value="shading" checked>
+          <div id="user-guide">
+            <div id="reset" class="button">Reset</div>
+            <div id="help" class="button">Help</div>
           </div>
           <div id="transformation-tool">
             <div id="rotation-tool">
@@ -69,35 +55,34 @@
               <input
                 type="range"
                 id="rotation-x"
-                value="180"
-                min="0"
-                max="360"
+                value="0"
+                min="-180"
+                max="180"
                 step="1"
               />
               <label for="rotation-y">Y</label>
               <input
                 type="range"
                 id="rotation-y"
-                value="180"
-                min="0"
-                max="360"
+                value="0"
+                min="-180"
+                max="180"
                 step="1"
               />
               <label for="rotation-z">Z</label>
               <input
                 type="range"
                 id="rotation-z"
-                value="180"
-                min="0"
-                max="360"
+                value="0"
+                min="-180"
+                max="180"
                 step="1"
               />
               <p>
                 (
-                <output id="rotation-x-value">0</output>,
-                <output id="rotation-y-value">0</output>,
-                <output id="rotation-z-value">0</output>
-                )
+                <output id="rotation-x-value">0</output> deg,
+                <output id="rotation-y-value">0</output> deg,
+                <output id="rotation-z-value">0</output> deg )
               </p>
             </div>
             <div id="translation-tool">
@@ -108,7 +93,7 @@
                 id="translation-x"
                 min="-1"
                 max="1"
-                step="0.0001"
+                step="0.01"
               />
               <label for="translation-y">Y</label>
               <input
@@ -116,7 +101,7 @@
                 id="translation-y"
                 min="-1"
                 max="1"
-                step="0.0001"
+                step="0.01"
               />
               <label for="translation-z">Z</label>
               <input
@@ -124,7 +109,7 @@
                 id="translation-z"
                 min="-1"
                 max="1"
-                step="0.0001"
+                step="0.01"
               />
               <p>
                 (
@@ -136,18 +121,10 @@
             </div>
             <div id="scaling-tool">
               <p>Scaling</p>
-              <label for="scaling-x">X</label>
-              <input type="range" id="scaling-x" min="-1" max="1" step="0.1" />
-              <label for="scaling-y">Y</label>
-              <input type="range" id="scaling-y" min="-1" max="1" step="0.1" />
-              <label for="scaling-z">Z</label>
-              <input type="range" id="scaling-z" min="-1" max="1" step="0.1" />
+              <input type="range" id="scaling" min="-1" max="1" step="0.1" />
               <p>
                 (
-                <output id="scaling-x-value">0</output>,
-                <output id="scaling-y-value">0</output>,
-                <output id="scaling-z-value">0</output>
-                )
+                <output id="scaling-value">0</output> times )
               </p>
             </div>
           </div>
