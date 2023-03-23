@@ -25,4 +25,7 @@ const rotateCamera = (cameraAngleRadian, radius) => {
     projectionMatrix,
     viewMatrix
   );
+
+  let zAxis = normalize(cameraPos, target);
+  let xAxis = normalize(cross);
 };
