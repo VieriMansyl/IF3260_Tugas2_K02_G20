@@ -207,7 +207,7 @@ function eventHandler() {
   // Shading checkbox
   const shadingbox = document.querySelector("#shading");
   shadingbox.addEventListener("change", () => {
-    model.shading = !model.shading;
+    setProgram(shadingbox.checked);
     window.requestAnimationFrame(render);
   });
 
