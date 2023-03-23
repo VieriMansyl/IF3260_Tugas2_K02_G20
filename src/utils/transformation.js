@@ -1,10 +1,10 @@
-import { degToRad } from "./math_utils.js"
+
 /** Kelas yang memiliki implementasi fungsi Tranformasi. 
 * @public getTranslationMatrix
 * @public getRotationMatrix
 * @public getScaleMatrix
 */
-export class TransformationMatrixm {
+class TransformationMatrixm {
   /** Menghasilkan matrix translasi. 
     * @param x - Besar translasi komponen x
     * @param y - Besar translasi komponen y

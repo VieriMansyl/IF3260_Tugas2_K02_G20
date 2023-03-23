@@ -5,7 +5,12 @@ let pentagonalPrismObject = new HollowPrism(5, 0.5, 0.5, 0.05);
 // pentagonalPrismObject.log();
 export const pentagonalPrism = pentagonalPrismObject.vertexArray;
 
+<<<<<<< HEAD
 export let octahedron = [
+=======
+
+export const octahedron = [
+>>>>>>> b0c7050796f99abaa7c93bd6c58ee9faeb5e46af
   // top - left :
   // front
   -1.0, 0.0, 0.0, 0.0, 1.0, 0.0, -0.729289, 0.0866, 0.0866,
