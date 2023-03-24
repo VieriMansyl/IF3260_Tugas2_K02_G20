@@ -371,15 +371,11 @@ function eventHandler() {
   // ---- CAMERA ----
   // camera rotate
   cameraRotate.addEventListener('input', () => {
-    camera_mat = rotateCamera(cameraRotate.value, 200);
-    console.log('cam', camera_mat);
-    projection_mat = mult4(projection_mat, camera_mat);
-    console.log('proj', projection_mat);
-    // TODO
+    projection_mat = rotateCamera(cameraRotate.value, projection_mat);
   });
   // camera view/ zoom in out
   cameraView.addEventListener('input', () => {
-    // TODO
+    projection_mat = zoom(cameraView.value, projection_mat);
   });
 
   // model picker

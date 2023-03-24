@@ -112,19 +112,21 @@ const lookAt = (cameraPos, target, up) => {
 };
 
 // Count rotation
-const rotateCamera = (cameraAngleRadians, radius) => {
-  let cameraMatrix = rotateY(degToRad(cameraAngleRadians));
-  let translatedMat = matrix4Translation(0, 0, radius * 1.5);
-  cameraMatrix = mult4(cameraMatrix, translatedMat);
+const rotateCamera = (cameraAngle, mat) => {
+  camera_mat = rotateY(degToRad(cameraAngle));
+  return mult4(camera_mat, mat);
+};
 
-  const objectPos = [0, 0, 0];
-  const cameraPos = [cameraMatrix[12], cameraMatrix[13], cameraMatrix[14]];
-  const upPos = [0, 1, 0];
-
-  cameraMatrix = lookAt(cameraPos, objectPos, upPos);
-
-  let viewMatrix = inverse(cameraMatrix);
-  if (viewMatrix != 0) {
-    return viewMatrix;
+const zoom = (zoomValue, mat) => {
+  if (zoomValue >= 0.5) {
+    return matrix4Multiplication(
+      mat,
+      [1.05, 0, 0, 0, 0, 1.05, 0, 0, 0, 0, 1.05, 0, 0, 0, 0, 1]
+    );
+  } else {
+    return matrix4Multiplication(
+      mat,
+      [0.95, 0, 0, 0, 0, 0.95, 0, 0, 0, 0, 0.95, 0, 0, 0, 0, 1]
+    );
   }
 };
