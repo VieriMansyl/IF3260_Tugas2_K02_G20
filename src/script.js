@@ -58,8 +58,11 @@ function setModel(type) {
 
 function setProjection(type) {
   if (type === 'orthographic') {
-    projection_mat = setOrthographicProjection();
+    projection_mat = Projection.getOrthographic(-1, 1, -1, 1, -1, 1);
+    console.log(projection_mat);
   } else if (type === 'oblique') {
+    projection_mat = Projection.getOblique(45, 45, -1, 1, -1, 1, -1, 1);
+    console.log(projection_mat);
   } else if (type === 'perspective') {
     projection_mat = setPerspectiveProjection(canvas);
   }
@@ -386,7 +389,6 @@ function eventHandler() {
   // camera view/ zoom in out
   cameraView.addEventListener('input', () => {
     // projection_mat = zoom(cameraView.value, projection_mat);
-    console.log(cameraView.value);
     camera.setCameraLocation(cameraView.value, cameraRotate.value);
   });
 
@@ -394,7 +396,6 @@ function eventHandler() {
   hollowObjectPicker.addEventListener('click', (e) => {
     if (contains(hollowObjectPicker, e.target)) {
       setModel(e.target.alt);
-      console.log(e.target.alt);
     }
   });
 

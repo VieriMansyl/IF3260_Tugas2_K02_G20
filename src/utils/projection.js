@@ -1,4 +1,38 @@
 
+class Projection {
+  static getOrthographic(left, right, bottom, top, near, far){
+    return matrix4Multiplication(
+      TransformationMatrix.getScaleMatrix(
+        2 / (right - left), 
+        2/(top - bottom), 
+        2 / (near - far)
+      ),
+      TransformationMatrix.getTranslationMatrix(
+        -(right + left) / 2, 
+        - (top + bottom) / 2, 
+        (far + near) / 2
+      )
+    );
+  }
+
+  static getOblique(theta, phi, left, right, bottom, top, near, far){
+    return multiMatrix4Multiplication(
+      [
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, -1,0,
+        0, 0, 0, 1
+      ],
+      this.getOrthographic(left, right, bottom, top, near, far),
+      [
+        1, 0, - 1 / Math.tan(degToRad(theta)), 0,
+        0, 1,  -  1 / Math.tan(degToRad(phi)), 0,
+        0, 0,                               1, 0,
+        0, 0,                               0, 1
+      ]
+    )
+  }
+}
 const setOrthographicProjection = () => {
   return [
     1.0, 0.0, 0.0, 0.0,
