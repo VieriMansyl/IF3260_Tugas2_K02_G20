@@ -15,6 +15,7 @@ const translateZ = document.querySelector('#translation-z');
 const cameraRotate = document.querySelector('#camera-rotate');
 const cameraView = document.querySelector('#camera-view');
 const hollowObjectPicker = document.querySelector('#hollow-object');
+const camera = new Camera(cameraView.value, cameraRotate.value);
 
 // INITIALIZE
 let canvas = document.querySelector('#canvas');
@@ -62,6 +63,10 @@ function setProjection(type) {
   } else if (type === 'perspective') {
     projection_mat = setPerspectiveProjection(canvas);
   }
+}
+
+function setWorldMatrix(){
+  world_mat = camera.getViewMatrix();
 }
 
 function setModelColor() {
@@ -134,6 +139,8 @@ function render() {
 
   // set modelview matrix
   setModelViewMatrix();
+
+  setWorldMatrix();
 
   // set model's buffer
   setBufferInfo();
@@ -271,7 +278,9 @@ function reset() {
 
   // reset camera view
   document.querySelector('#camera-view').value = 0.5;
+
   // TODO : reset camera matrix
+  camera.reset();
 
   render();
 }
@@ -371,11 +380,14 @@ function eventHandler() {
   // ---- CAMERA ----
   // camera rotate
   cameraRotate.addEventListener('input', () => {
-    projection_mat = rotateCamera(cameraRotate.value, projection_mat);
+    // projection_mat = rotateCamera(cameraRotate.value, projection_mat);
+    camera.setCameraLocation(cameraView.value, cameraRotate.value);
   });
   // camera view/ zoom in out
   cameraView.addEventListener('input', () => {
-    projection_mat = zoom(cameraView.value, projection_mat);
+    // projection_mat = zoom(cameraView.value, projection_mat);
+    console.log(cameraView.value);
+    camera.setCameraLocation(cameraView.value, cameraRotate.value);
   });
 
   // model picker
