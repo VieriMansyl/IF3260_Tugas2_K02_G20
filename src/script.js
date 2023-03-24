@@ -12,14 +12,13 @@ const scale = document.querySelector('#scaling');
 const translateX = document.querySelector('#translation-x');
 const translateY = document.querySelector('#translation-y');
 const translateZ = document.querySelector('#translation-z');
-const cameraRotate = document.querySelector("#camera-rotate");
-const cameraView = document.querySelector("#camera-view");
+const cameraRotate = document.querySelector('#camera-rotate');
+const cameraView = document.querySelector('#camera-view');
 const hollowObjectPicker = document.querySelector('#hollow-object');
 
 // INITIALIZE
 let canvas = document.querySelector('#canvas');
 let gl = getWebGLContext(canvas);
-
 
 function setProgram(isShading) {
   var shaderProgram = createProgram(gl, isShading);
@@ -142,17 +141,38 @@ function render() {
   {
     // set model's position buffer
     gl.bindBuffer(gl.ARRAY_BUFFER, model.bufferInfo.positionBuffer);
-    gl.vertexAttribPointer(model.programInfo.a_loc.vertexPosition,3,gl.FLOAT,false,0,0);
+    gl.vertexAttribPointer(
+      model.programInfo.a_loc.vertexPosition,
+      3,
+      gl.FLOAT,
+      false,
+      0,
+      0
+    );
     gl.enableVertexAttribArray(model.programInfo.a_loc.vertexPosition);
 
     // set model's color buffer
     gl.bindBuffer(gl.ARRAY_BUFFER, model.bufferInfo.colorBuffer);
-    gl.vertexAttribPointer(model.programInfo.a_loc.vertexColor,4,gl.FLOAT,false,0,0);
+    gl.vertexAttribPointer(
+      model.programInfo.a_loc.vertexColor,
+      4,
+      gl.FLOAT,
+      false,
+      0,
+      0
+    );
     gl.enableVertexAttribArray(model.programInfo.a_loc.vertexColor);
 
     // set model's normal buffer
     gl.bindBuffer(gl.ARRAY_BUFFER, model.bufferInfo.normalBuffer);
-    gl.vertexAttribPointer(model.programInfo.a_loc.vertexNormal,3,gl.FLOAT,false,0,0);
+    gl.vertexAttribPointer(
+      model.programInfo.a_loc.vertexNormal,
+      3,
+      gl.FLOAT,
+      false,
+      0,
+      0
+    );
     gl.enableVertexAttribArray(model.programInfo.a_loc.vertexNormal);
   }
 
@@ -161,10 +181,26 @@ function render() {
 
   {
     // Set uniforms
-    gl.uniformMatrix4fv(model.programInfo.u_matrix.normalMatrix,false,normals_mat);
-    gl.uniformMatrix4fv(model.programInfo.u_matrix.worldMatrix,false,world_mat);
-    gl.uniformMatrix4fv(model.programInfo.u_matrix.modelViewMatrix,false,mv_mat);
-    gl.uniformMatrix4fv(model.programInfo.u_matrix.projectionMatrix,false,projection_mat);
+    gl.uniformMatrix4fv(
+      model.programInfo.u_matrix.normalMatrix,
+      false,
+      normals_mat
+    );
+    gl.uniformMatrix4fv(
+      model.programInfo.u_matrix.worldMatrix,
+      false,
+      world_mat
+    );
+    gl.uniformMatrix4fv(
+      model.programInfo.u_matrix.modelViewMatrix,
+      false,
+      mv_mat
+    );
+    gl.uniformMatrix4fv(
+      model.programInfo.u_matrix.projectionMatrix,
+      false,
+      projection_mat
+    );
 
     // set light direction
     gl.uniform3fv(model.programInfo.u_matrix.directionalVector, [1, 1, 1]);
@@ -309,27 +345,42 @@ function eventHandler() {
 
   // translation
   translateX.addEventListener('input', () => {
-    translate_mat = setModelTranslation(translateX.value, translateY.value, translateZ.value);
+    translate_mat = setModelTranslation(
+      translateX.value,
+      translateY.value,
+      translateZ.value
+    );
   });
 
   translateY.addEventListener('input', () => {
-    translate_mat = setModelTranslation(translateX.value, translateY.value, translateZ.value);
+    translate_mat = setModelTranslation(
+      translateX.value,
+      translateY.value,
+      translateZ.value
+    );
   });
 
   translateZ.addEventListener('input', () => {
-    translate_mat = setModelTranslation(translateX.value, translateY.value, translateZ.value);
+    translate_mat = setModelTranslation(
+      translateX.value,
+      translateY.value,
+      translateZ.value
+    );
   });
 
   // ---- CAMERA ----
   // camera rotate
-  cameraRotate.addEventListener( "input", () => {
+  cameraRotate.addEventListener('input', () => {
+    camera_mat = rotateCamera(cameraRotate.value, 200);
+    console.log('cam', camera_mat);
+    projection_mat = mult4(projection_mat, camera_mat);
+    console.log('proj', projection_mat);
     // TODO
-  } )
-  // camera view
-  cameraView.addEventListener( "input", () => {
+  });
+  // camera view/ zoom in out
+  cameraView.addEventListener('input', () => {
     // TODO
-  } )
-
+  });
 
   // model picker
   hollowObjectPicker.addEventListener('click', (e) => {
