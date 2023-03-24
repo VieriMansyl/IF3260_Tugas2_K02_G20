@@ -6,7 +6,7 @@ const minus = (p1, p2) => {
 // normalize vector 
 const normalize = (normal) => {
   const n = Math.sqrt(normal[0] * normal[0] + normal[1] * normal[1] + normal[2] * normal[2]);
-  return [normal[0] / n, normal[1] / n, normal[2] / n];
+  return n === 0? [0, 0, 0] : [normal[0] / n, normal[1] / n, normal[2] / n];
 }
 
 // get normal vector from u v
