@@ -10,6 +10,7 @@ Untuk mensimulasikan pencahayaan pada objek, shader dapat diaktifkan dan dimatik
 
 ## Fitur Bonus
 - Animasi objek
+- Implementasi shading manual tanpa fungsi bawaan GL
 
 ## Menjalankan program
 ### Requirement
