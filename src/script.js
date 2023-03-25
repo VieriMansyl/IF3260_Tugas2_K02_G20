@@ -1,4 +1,4 @@
-import { cube, pentagonalPrism, octahedron } from './assets/models.js';
+import { cube, pentagonalPrism, octahedron } from '../test/models.js';
 
 const shadingbox = document.querySelector('#shading');
 const colorpicker = document.querySelector('#color-picker');
